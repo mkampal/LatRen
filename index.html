@@ -7,15 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- JSZip for Batch → ZIP (client-side only) -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
     :root{
-      --bg: #0b0d12;         /* dark base */
-      --panel: #121623;      /* panels */
-      --panel-2: #0e1320;    /* header/footer */
-      --text: #e6ecff;       /* main text */
-      --muted: #a1accf;      /* muted text */
-      --accent: #7aa2ff;     /* primary accent */
-      --accent-2: #00d4ff;   /* secondary accent */
+      --bg: #0b0d12;
+      --panel: #121623;
+      --panel-2: #0e1320;
+      --text: #e6ecff;
+      --muted: #a1accf;
+      --accent: #7aa2ff;
+      --accent-2: #00d4ff;
       --success: #6be675;
       --danger: #ff7a84;
       --warning: #ffb454;
@@ -41,16 +43,11 @@
     html,body{height:100%}
     body{
       margin:0; background:var(--bg); color:var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       line-height:1.45; letter-spacing:.2px;
     }
     .container{max-width:1200px; margin:0 auto; padding:24px;}
-    header{
-      background:linear-gradient(135deg, var(--panel-2), transparent 60%), linear-gradient(45deg, rgba(48,94,255,.15), rgba(0,212,255,.05));
-      border-bottom:1px solid var(--border);
-      position:sticky; top:0; z-index:10;
-      backdrop-filter: blur(8px);
-    }
+    header{background:linear-gradient(135deg, var(--panel-2), transparent 60%), linear-gradient(45deg, rgba(48,94,255,.15), rgba(0,212,255,.05)); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; backdrop-filter: blur(8px);}
     .hdr-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
     .brand{display:flex; align-items:center; gap:12px;}
     .logo{width:40px; height:40px; border-radius:12px; background:radial-gradient(120px 50px at 30% 30%, var(--accent), transparent 70%), radial-gradient(120px 50px at 70% 70%, var(--accent-2), transparent 70%), linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)); box-shadow:var(--shadow);}
@@ -100,7 +97,6 @@
     .templates{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
     .template{font-size:12px; padding:6px 8px; border-radius:10px; border:1px solid var(--border); background:var(--panel-2); cursor:pointer}
 
-    /* Dropdown (category selector) */
     .dropdown{position:absolute; right:0; top:100%; margin-top:8px; width:290px; background:var(--popover); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:10px; z-index:20;}
     .dropdown h3{margin:0 0 8px 0; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px}
     .dropdown .row{display:flex; gap:6px; margin:8px 0 6px 0}
@@ -118,9 +114,9 @@
     details.instructions summary{cursor:pointer; font-weight:600}
     details.instructions p{color:var(--muted); margin:.4em 0}
 
-    .status{margin-top:10px; font-size:13px}
+    .status{margin-top:10px; font-size:13px; white-space:pre-wrap}
     .status.ok{color:var(--success)}
-    .status.err{color:var(--danger); white-space:pre-wrap}
+    .status.err{color:var(--danger)}
 
     .history{display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:12px}
     .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column}
@@ -132,20 +128,20 @@
     footer{margin-top:32px; padding:18px 0; color:var(--muted); border-top:1px solid var(--border)}
     code.inline{font-family:"JetBrains Mono", monospace; background:rgba(122,162,255,.12); padding:.2em .45em; border-radius:6px}
 
-    /* Responsive */
     @media (max-width: 980px){
       .grid{grid-template-columns: 1fr}
       .dropdown{right:auto; left:0;}
     }
   </style>
-  <!-- MathJax (TeX → SVG). If you need offline use, download and host locally later. -->
+
+  <!-- MathJax (TeX → SVG). -->
   <script>
     window.MathJax = {
       tex: {
-        inlineMath: [["$","$"],["\\\\(","\\\\)"]],
-        displayMath: [["$$","$$"],["\\\\[","\\\\]"]],
-        packages: {'[+]': ['base', 'ams']},
-        maxBuffer: 10_000
+        inlineMath: [['$','$'],['\\(','\\)']],
+        displayMath: [['$$','$$'],['\\[','\\]']],
+        packages: {'[+]': ['base','ams']},  // ams for aligned/flalign/etc.
+        maxBuffer: 10000
       },
       svg: { fontCache: 'none' },
       options: { enableMenu: false }
@@ -174,44 +170,41 @@
 
   <main class="container">
     <div class="grid">
-      <!-- Editor Panel -->
       <section class="panel" aria-labelledby="editor-title">
         <h2 id="editor-title">Editor</h2>
         <div class="body">
           <div class="row">
             <div>
               <label for="latex" class="badge">LaTeX Input</label>
-              <textarea id="latex" spellcheck="false" placeholder="Type LaTeX here...">\\begin{aligned}
-L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\right)^2 \\quad\\text{with}\\quad \\hat{y}^{(i)} = f_\\theta(x^{(i)})
-\\end{aligned}
+              <textarea id="latex" spellcheck="false" placeholder="Type LaTeX here...">\[
+\text{Welcome to LatRen! Render: Ctrl/⌘+Enter · PNG: Ctrl/⌘+S · Copy: Ctrl/⌘+K}
+\]
+\[\text{Separate formulas with a blank line for Batch → ZIP. Use single backslashes.}\]
 </textarea>
             </div>
           </div>
 
-          <!-- Templates Toolbar -->
           <div class="templates-toolbar">
             <div class="badge">Math Keys</div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <button class="btn secondary" id="templateFilterBtn" aria-haspopup="true" aria-expanded="false">Categories ▾</button>
+              <button class="btn secondary" id="templateFilterBtn" aria-haspopup="true" aria-expanded="false" type="button">Categories ▾</button>
               <span id="catSummary" style="font-size:12px; color:var(--muted)"></span>
             </div>
-            <!-- Dropdown -->
             <div class="dropdown" id="templateDropdown" hidden>
               <h3>Show categories</h3>
               <div class="row">
-                <button class="pill" id="selectAll">All</button>
-                <button class="pill" id="selectNone">None</button>
-                <button class="pill" id="selectIB">IB Core</button>
+                <button class="pill" id="selectAll" type="button">All</button>
+                <button class="pill" id="selectNone" type="button">None</button>
+                <button class="pill" id="selectIB" type="button">IB Core</button>
               </div>
-              <div class="catlist" id="catList">
-                <!-- populated by JS -->
-              </div>
+              <div class="catlist" id="catList"></div>
               <small>Selections persist locally.</small>
             </div>
           </div>
 
           <div class="templates" id="templates">
-             <button class="template" data-cat="basics" data-snippet="x^2">x²</button>
+            <!-- Basics -->
+            <button class="template" data-cat="basics" data-snippet="x^2">x²</button>
             <button class="template" data-cat="basics" data-snippet="x^{n}">xⁿ</button>
             <button class="template" data-cat="basics" data-snippet="x_{i}">xᵢ</button>
             <button class="template" data-cat="basics" data-snippet="\frac{a}{b}">a⁄b</button>
@@ -286,6 +279,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
             <button class="template" data-cat="calculus" data-snippet="\lim_{x\to a} f(x)">lim</button>
             <button class="template" data-cat="calculus" data-snippet="\sum_{k=1}^{n} a_k">∑</button>
             <button class="template" data-cat="calculus" data-snippet="\prod_{k=1}^{n} a_k">∏</button>
+            <button class="template" data-cat="calculus" data-snippet="\int_{-\infty}^{\infty} e^{-x^2}\,dx=\sqrt{\pi}">∫e^{-x²}</button>
 
             <!-- Algebra / relations -->
             <button class="template" data-cat="algebra" data-snippet="\cdot">·</button>
@@ -307,6 +301,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
             <button class="template" data-cat="algebra" data-snippet="\cup">∪</button>
             <button class="template" data-cat="algebra" data-snippet="\cap">∩</button>
             <button class="template" data-cat="algebra" data-snippet="\setminus">∖</button>
+            <button class="template" data-cat="algebra" data-snippet="\{\;x\in\mathbb{R}\mid\;\}">{x|}</button>
             <button class="template" data-cat="algebra" data-snippet="\binom{n}{k}">nCk</button>
             <button class="template" data-cat="algebra" data-snippet="\therefore">∴</button>
 
@@ -327,7 +322,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
             <button class="template" data-cat="geometry" data-snippet="\angle ABC">∠</button>
             <button class="template" data-cat="geometry" data-snippet="^\circ">°</button>
             <button class="template" data-cat="geometry" data-snippet="\triangle ABC">△</button>
-            <button class="template" data-cat="geometry" data-snippet="\overrightarrow{AB}">AB→</button>
+            <button class="template" data-cat="geometry" data-snippet="\overrightarrow{AB}">AB⃗</button>
 
             <!-- Probability / stats -->
             <button class="template" data-cat="probability" data-snippet="\mathbb{E}[X]">𝔼[·]</button>
@@ -344,8 +339,8 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
 
             <!-- Series / sequences -->
             <button class="template" data-cat="series" data-snippet="\sum_{k=0}^{n} r^{k}=\frac{1-r^{n+1}}{1-r},\; r\ne1">Geom Σ</button>
-            <button class="template" data-cat="series" data-snippet="\frac{n}{2}\left(2a_{1}+(n-1)d\right)=\sum_{k=1}^{n}\left(a_{1}+(k-1)d\right)">Arith Σ</button>
             <button class="template" data-cat="series" data-snippet="a_{n}\to L">aₙ→L</button>
+            <button class="template" data-cat="series" data-snippet="\frac{n}{2}\left(2a_{1}+(n-1)d\right)=\sum_{k=1}^{n}\left(a_{1}+(k-1)d\right)">Arith Σ</button>
 
             <!-- Dots / spacing -->
             <button class="template" data-cat="dots" data-snippet="\cdots">⋯</button>
@@ -353,15 +348,16 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
           </div>
 
           <div class="controls" aria-label="Render and export controls">
-            <button class="btn" id="renderBtn">Render (Ctrl/⌘+Enter)</button>
-            <button class="btn secondary" id="liveToggle" aria-pressed="false">Live: Off</button>
-            <button class="btn good" id="downloadPNGBtn">Download PNG (Ctrl/⌘+S)</button>
-            <button class="btn secondary" id="downloadSVGBtn">Download SVG</button>
-            <button class="btn secondary" id="copyPNGBtn">Copy PNG</button>
-            <button class="btn secondary" id="copySVGBtn">Copy SVG</button>
-            <button class="btn secondary" id="shareBtn">Share link</button>
-            <button class="btn warn" id="saveHistoryBtn">Save to History</button>
-            <button class="btn bad" id="clearBtn">Clear</button>
+            <button class="btn" id="renderBtn" type="button">Render (Ctrl/⌘+Enter)</button>
+            <button class="btn secondary" id="liveToggle" aria-pressed="false" type="button">Live: Off</button>
+            <button class="btn good" id="downloadPNGBtn" type="button">Download PNG (Ctrl/⌘+S)</button>
+            <button class="btn secondary" id="downloadSVGBtn" type="button">Download SVG</button>
+            <button class="btn secondary" id="copyPNGBtn" type="button">Copy PNG</button>
+            <button class="btn secondary" id="copySVGBtn" type="button">Copy SVG</button>
+            <button class="btn secondary" id="shareBtn" type="button">Share link</button>
+            <button class="btn warn" id="saveHistoryBtn" type="button">Save to History</button>
+            <button class="btn bad" id="clearBtn" type="button">Clear</button>
+            <button class="btn warn" id="batchZipBtn" type="button" title="Split by blank lines → render each → ZIP PNG+SVG">Batch → ZIP</button>
           </div>
 
           <div class="controls" aria-label="Output options">
@@ -375,14 +371,14 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
 
           <details class="instructions">
             <summary>How to use</summary>
-            <p>Type math LaTeX (e.g., environments like <code class="inline">aligned</code>, <code class="inline">cases</code>, <code class="inline">bmatrix</code>). Use <code class="inline">$$...$$</code> or block environments — full documents with <code class="inline">\\documentclass</code> are <em>not</em> supported.</p>
+            <p>Type math LaTeX (e.g., environments like <code class="inline">aligned</code>, <code class="inline">cases</code>, <code class="inline">bmatrix</code>). Use <code class="inline">$$...$$</code> or block environments — full documents with <code class="inline">\documentclass</code> are <em>not</em> supported.</p>
             <p>Click <strong>Render</strong>, then <strong>Download PNG/SVG</strong>. Adjust <em>scale</em> for resolution and <em>padding</em> for margins. Toggle <em>transparent</em> background for overlays. Use <strong>Share link</strong> to encode your formula in the URL.</p>
             <p>Shortcuts: <code class="inline">Ctrl/⌘+Enter</code> render · <code class="inline">Ctrl/⌘+S</code> download PNG · <code class="inline">Ctrl/⌘+K</code> copy PNG</p>
+            <p><strong>Batch → ZIP:</strong> Separate formulas with a blank line. Each block renders to both SVG and PNG inside a ZIP (plus manifest and any errors).</p>
           </details>
         </div>
       </section>
 
-      <!-- Preview Panel -->
       <section class="panel" aria-labelledby="preview-title">
         <h2 id="preview-title">Preview</h2>
         <div class="preview-wrap">
@@ -398,7 +394,6 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       </section>
     </div>
 
-    <!-- History Panel -->
     <section class="panel" style="margin-top:18px" aria-labelledby="history-title">
       <h2 id="history-title">History (local)</h2>
       <div class="body">
@@ -408,7 +403,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
 
     <footer>
       <div>
-        Built with MathJax (TeX→SVG), client-side PNG conversion, and localStorage. Fully standalone single-file app. Ideal for demonstrating algorithms (parsing, rendering pipeline, data URL handling, clipboard API) in an IB CS IA.
+        Built with MathJax (TeX→SVG), JSZip, and localStorage. Fully standalone single-file app.
       </div>
     </footer>
   </main>
@@ -451,6 +446,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       selectAll: $('#selectAll'),
       selectNone: $('#selectNone'),
       selectIB: $('#selectIB'),
+      batchZipBtn: $('#batchZipBtn'),
     };
 
     const state = {
@@ -485,12 +481,10 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       try{
         const arr = JSON.parse(localStorage.getItem(CATS_KEY) || 'null');
         if(Array.isArray(arr) && arr.length){ state.cats = new Set(arr); }
-        else { state.cats = new Set(CATS.map(([k])=>k)); } // default: all
+        else { state.cats = new Set(CATS.map(([k])=>k)); }
       }catch{ state.cats = new Set(CATS.map(([k])=>k)); }
     }
-    function saveCats(){
-      localStorage.setItem(CATS_KEY, JSON.stringify([...state.cats]));
-    }
+    function saveCats(){ localStorage.setItem(CATS_KEY, JSON.stringify([...state.cats])); }
     function applyCategoryFilter(){
       const allBtns = $$('.template');
       allBtns.forEach(btn => {
@@ -533,29 +527,20 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
     function onDocClick(e){
       if(!els.templateDropdown.contains(e.target) && e.target !== els.templateFilterBtn){
         closeDropdown();
-      } else {
-        document.addEventListener('click', onDocClick, { once: true });
-      }
+      } else { document.addEventListener('click', onDocClick, { once: true }); }
     }
     function onEsc(e){
       if(e.key === 'Escape') closeDropdown();
       else document.addEventListener('keydown', onEsc, { once: true });
     }
 
-    els.templateFilterBtn.addEventListener('click', (e)=>{
+    els.templateFilterBtn.addEventListener('click', ()=>{
       const opened = els.templateDropdown.hidden === false;
       if(opened) closeDropdown(); else openDropdown();
     });
-    els.selectAll.addEventListener('click', ()=>{
-      state.cats = new Set(CATS.map(([k])=>k)); saveCats(); buildCatUI(); applyCategoryFilter();
-    });
-    els.selectNone.addEventListener('click', ()=>{
-      state.cats = new Set(); saveCats(); buildCatUI(); applyCategoryFilter();
-    });
-    // Pragmatic preset for IB core math-heavy work
-    els.selectIB.addEventListener('click', ()=>{
-      state.cats = new Set(['basics','greek','calculus','algebra','matrices','probability','series']); saveCats(); buildCatUI(); applyCategoryFilter();
-    });
+    els.selectAll.addEventListener('click', ()=>{ state.cats = new Set(CATS.map(([k])=>k)); saveCats(); buildCatUI(); applyCategoryFilter(); });
+    els.selectNone.addEventListener('click', ()=>{ state.cats = new Set(); saveCats(); buildCatUI(); applyCategoryFilter(); });
+    els.selectIB.addEventListener('click', ()=>{ state.cats = new Set(['basics','greek','calculus','algebra','matrices','probability','series']); saveCats(); buildCatUI(); applyCategoryFilter(); });
 
     // Theme
     els.themeToggle.addEventListener('change', () => {
@@ -564,16 +549,17 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       document.body.classList.toggle('dark', state.dark);
     });
 
-    // Templates insertion
+    // Template insertion: normalize to single backslashes
     $$('.template').forEach(btn => btn.addEventListener('click', () => {
-      const t = btn.getAttribute('data-snippet');
-      insertAtCursor(els.latex, t);
+      const raw = btn.getAttribute('data-snippet') || '';
+      const single = raw.replace(/\\\\/g, '\\');
+      insertAtCursor(els.latex, single);
       if(state.live) render();
     }));
 
     function insertAtCursor(textarea, text){
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
+      const start = textarea.selectionStart ?? textarea.value.length;
+      const end = textarea.selectionEnd ?? textarea.value.length;
       const value = textarea.value;
       textarea.value = value.slice(0,start) + text + value.slice(end);
       textarea.focus();
@@ -589,94 +575,72 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
     });
 
     // Status helpers
-    function setStatus(msg, ok=false){
-      els.status.textContent = msg;
-      els.status.className = 'status ' + (ok ? 'ok' : 'err');
-    }
-    function clearStatus(){
-      els.status.textContent = '';
-      els.status.className = 'status';
-    }
+    function setStatus(msg, cls){ els.status.textContent = msg; els.status.className = 'status ' + (cls || ''); }
+    function clearStatus(){ els.status.textContent = ''; els.status.className = 'status'; }
 
-    // Render flow: TeX -> SVG (MathJax) -> PNG (Canvas)
+    // Render: TeX -> SVG -> PNG
     async function render(){
       clearStatus();
       const tex = els.latex.value.trim();
-      if(!tex){ setStatus('Enter some LaTeX to render.'); return; }
+      if(!tex){ setStatus('Enter some LaTeX to render.', 'err'); return; }
 
-      // Wait for MathJax startup if needed
-      if(window.MathJax && MathJax.startup && MathJax.startup.promise){
-        await MathJax.startup.promise;
-      }
+      if(window.MathJax?.startup?.promise){ await MathJax.startup.promise; }
 
       let svgNode;
       try {
-        svgNode = await MathJax.tex2svgPromise(tex, {display: true});
+        svgNode = await MathJax.tex2svgPromise(tex, {display:true});
       } catch (err) {
         console.error(err);
-        setStatus('LaTeX error: ' + (err.message || err.toString()));
+        setStatus('LaTeX parse error. Tip: use \\[...\\] or environments; wrap text with \\text{...}', 'err');
         return;
       }
 
       const svg = svgNode.querySelector('svg');
-      if(!svg){
-        setStatus('Failed to create SVG.');
-        return;
-      }
+      if(!svg){ setStatus('Failed to create SVG.', 'err'); return; }
       svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
-      svg.removeAttribute('style'); // ensure clean
+      svg.removeAttribute('style');
 
-      // Optional watermark
-      if(els.watermarkToggle.checked){
-        const txt = (els.watermarkText.value || 'LatRen').slice(0,64);
-        const vb = (svg.getAttribute('viewBox') || '0 0 100 100').split(/\\s+/).map(Number);
-        const [vx, vy, vw, vh] = vb.length===4? vb : [0,0,100,100];
-        const wm = document.createElementNS('http://www.w3.org/2000/svg','text');
-        wm.setAttribute('x', String(vx + vw - 4));
-        wm.setAttribute('y', String(vy + vh - 4));
-        wm.setAttribute('text-anchor','end');
-        wm.setAttribute('fill', 'rgba(127,127,127,0.35)');
-        wm.setAttribute('font-size', String(Math.max(8, Math.min(16, vw*0.04))));
-        wm.textContent = txt;
-        svg.appendChild(wm);
-      }
+      if(els.watermarkToggle.checked){ applyWatermark(svg, (els.watermarkText.value || 'LatRen').slice(0,64)); }
 
-      // Serialize SVG
       const ser = new XMLSerializer();
       let svgText = ser.serializeToString(svg);
-      // Add XML header for better compatibility
-      if(!svgText.startsWith('<?xml')){
-        svgText = `<?xml version="1.0" encoding="UTF-8"?>\n` + svgText;
-      }
+      if(!svgText.startsWith('<?xml')) svgText = `<?xml version="1.0" encoding="UTF-8"?>\n` + svgText;
       state.svgText = svgText;
 
-      // Convert SVG -> PNG
       try {
-        const scale = clamp(parseFloat(els.scale.value)||1, 0.1, 8);
-        const padding = Math.max(0, parseInt(els.padding.value||0,10));
-        const transparent = els.transparent.checked;
-        const bg = transparent ? 'transparent' : els.bg.value;
-        const png = await svgToPng(svgText, scale, bg, padding);
-        els.preview.src = png.dataURL;
-        state.pngDataURL = png.dataURL;
-        state.pngBlob = png.blob;
-
-        // Meta info
-        els.metaSize.textContent = `${png.canvas.width} × ${png.canvas.height}px`;
+        const {dataURL, blob, canvas} = await svgToPng(svgText, readScale(), readBg(), readPadding());
+        els.preview.src = dataURL;
+        state.pngDataURL = dataURL;
+        state.pngBlob = blob;
+        els.metaSize.textContent = `${canvas.width} × ${canvas.height}px`;
         els.metaType.textContent = 'PNG';
-        els.metaBg.textContent = `BG: ${transparent ? 'transparent' : els.bg.value.toUpperCase()}`;
-
+        els.metaBg.textContent = `BG: ${els.transparent.checked ? 'transparent' : els.bg.value.toUpperCase()}`;
       } catch (err) {
         console.error(err);
-        setStatus('Render error: ' + (err.message || err.toString()));
+        setStatus('Render error: ' + (err.message || err.toString()), 'err');
         return;
       }
-
-      setStatus('Rendered successfully ✓', true);
+      setStatus('Rendered successfully ✓', 'ok');
       saveDraft();
     }
 
+    function readScale(){ return clamp(parseFloat(els.scale.value)||1, 0.1, 8); }
+    function readPadding(){ return Math.max(0, parseInt(els.padding.value||0,10)); }
+    function readBg(){ return els.transparent.checked ? 'transparent' : els.bg.value; }
     function clamp(v, mn, mx){ return Math.max(mn, Math.min(mx, v)); }
+
+    function applyWatermark(svg, txt){
+      const vb = (svg.getAttribute('viewBox') || '0 0 100 100').split(/\s+/).map(Number);
+      const [vx, vy, vw, vh] = vb.length===4? vb : [0,0,100,100];
+      const wm = document.createElementNS('http://www.w3.org/2000/svg','text');
+      wm.setAttribute('x', String(vx + vw - 4));
+      wm.setAttribute('y', String(vy + vh - 4));
+      wm.setAttribute('text-anchor','end');
+      wm.setAttribute('fill', 'rgba(127,127,127,0.35)');
+      wm.setAttribute('font-size', String(Math.max(8, Math.min(16, vw*0.04))));
+      wm.textContent = txt;
+      svg.appendChild(wm);
+    }
 
     function svgToPng(svgText, scale, bgColor, padding){
       return new Promise((resolve, reject) => {
@@ -684,7 +648,6 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
         const blob = new Blob([svgText], {type:'image/svg+xml'});
         const url = URL.createObjectURL(blob);
         img.onload = () => {
-          // Compute canvas size
           const w = Math.ceil(img.width * scale + 2*padding);
           const h = Math.ceil(img.height * scale + 2*padding);
           const canvas = document.createElement('canvas');
@@ -696,7 +659,6 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
           }
           ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, padding, padding, img.width * scale, img.height * scale);
-
           canvas.toBlob(b => {
             URL.revokeObjectURL(url);
             if(!b) return reject(new Error('Failed to create PNG blob'));
@@ -723,7 +685,7 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
     });
 
     els.downloadSVGBtn.addEventListener('click', () => {
-      if(!state.svgText){ setStatus('Nothing to download. Render first.'); return; }
+      if(!state.svgText){ setStatus('Nothing to download. Render first.', 'err'); return; }
       const blob = new Blob([state.svgText], {type:'image/svg+xml'});
       download(suggestName('latren','svg'), blob);
     });
@@ -732,8 +694,8 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       try{
         if(!state.pngBlob) await render();
         await navigator.clipboard.write([ new ClipboardItem({ 'image/png': state.pngBlob }) ]);
-        setStatus('PNG copied to clipboard ✓', true);
-      }catch(err){ setStatus('Clipboard not available: ' + err, false); }
+        setStatus('PNG copied to clipboard ✓', 'ok');
+      }catch(err){ setStatus('Clipboard not available: ' + err, 'err'); }
     });
 
     els.copySVGBtn.addEventListener('click', async () => {
@@ -742,14 +704,14 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
         const type = 'image/svg+xml';
         const blob = new Blob([state.svgText], {type});
         await navigator.clipboard.write([ new ClipboardItem({ [type]: blob }) ]);
-        setStatus('SVG copied to clipboard ✓', true);
-      }catch(err){ setStatus('Clipboard not available: ' + err, false); }
+        setStatus('SVG copied to clipboard ✓', 'ok');
+      }catch(err){ setStatus('Clipboard not available: ' + err, 'err'); }
     });
 
-    // Share link (encode LaTeX & options in URL hash)
+    // Share link
     els.shareBtn.addEventListener('click', () => {
       const url = buildShareUrl();
-      navigator.clipboard.writeText(url).then(() => setStatus('Sharable link copied ✓', true));
+      navigator.clipboard.writeText(url).then(() => setStatus('Sharable link copied ✓', 'ok'));
       history.replaceState(null, '', url);
     });
 
@@ -762,46 +724,28 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       params.set('t', els.transparent.checked ? '1' : '0');
       return `${o.origin}${o.pathname}#${params.toString()}`;
     }
-
     function parseShareUrl(){
       if(!location.hash) return;
       const qs = location.hash.slice(1);
       const params = new URLSearchParams(qs);
-      if(params.has('q')){
-        try{ els.latex.value = b64dec(params.get('q')||''); }catch{}
-      }
+      if(params.has('q')){ try{ els.latex.value = b64dec(params.get('q')||''); }catch{} }
       if(params.has('s')) els.scale.value = params.get('s');
       if(params.has('p')) els.padding.value = params.get('p');
       if(params.has('t')) els.transparent.checked = params.get('t')==='1';
     }
-
     function b64enc(str){ return btoa(unescape(encodeURIComponent(str))); }
     function b64dec(str){ return decodeURIComponent(escape(atob(str))); }
-
-    function suggestName(base, ext){
-      const t = new Date().toISOString().replace(/[:.]/g,'-');
-      return `${base}-${t}.${ext}`;
-    }
+    function suggestName(base, ext){ const t = new Date().toISOString().replace(/[:.]/g,'-'); return `${base}-${t}.${ext}`; }
 
     // History (localStorage)
     const HISTORY_KEY = 'latren-history-v1';
-
-    function loadHistory(){
-      try{
-        const arr = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-        return Array.isArray(arr) ? arr : [];
-      }catch{ return []; }
-    }
-
+    function loadHistory(){ try{ const arr = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }catch{ return []; } }
     function saveHistoryCard(item){
       const card = document.createElement('div');
       card.className = 'card';
-      const img = document.createElement('img');
-      img.src = item.pngURL; img.alt = 'Formula preview';
+      const img = document.createElement('img'); img.src = item.pngURL; img.alt = 'Formula preview';
       const info = document.createElement('div'); info.className='info';
-      const small = document.createElement('small');
-      small.textContent = new Date(item.time).toLocaleString();
-      info.appendChild(small);
+      const small = document.createElement('small'); small.textContent = new Date(item.time).toLocaleString(); info.appendChild(small);
       const actions = document.createElement('div'); actions.className='actions';
       const btnUse = document.createElement('button'); btnUse.className='btn secondary'; btnUse.textContent='Load';
       const btnDL = document.createElement('button'); btnDL.className='btn'; btnDL.textContent='PNG';
@@ -811,65 +755,186 @@ L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\
       card.appendChild(img); card.appendChild(info); card.appendChild(actions);
       els.history.prepend(card);
     }
-
-    function refreshHistory(){
-      els.history.innerHTML = '';
-      loadHistory().forEach(saveHistoryCard);
-    }
-
+    function refreshHistory(){ els.history.innerHTML = ''; loadHistory().forEach(saveHistoryCard); }
     function addToHistory(){
-      if(!state.pngDataURL) { setStatus('Render first to save history.'); return; }
+      if(!state.pngDataURL) { setStatus('Render first to save history.', 'err'); return; }
       const items = loadHistory();
       const entry = { latex: els.latex.value, pngURL: state.pngDataURL, time: Date.now() };
-      items.unshift(entry);
-      while(items.length > 24) items.pop();
+      items.unshift(entry); while(items.length > 24) items.pop();
       localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
       saveHistoryCard(entry);
-      setStatus('Saved to history ✓', true);
+      setStatus('Saved to history ✓', 'ok');
     }
-
     els.saveHistoryBtn.addEventListener('click', addToHistory);
 
-    // Draft persistence
+    // Draft
     const DRAFT_KEY = 'latren-draft-v1';
-    function saveDraft(){ localStorage.setItem(DRAFT_KEY, JSON.stringify({
-      latex: els.latex.value, scale: els.scale.value, padding: els.padding.value,
-      bg: els.bg.value, transparent: els.transparent.checked,
-    })); }
-    function loadDraft(){ try{
-      const d = JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
-      if(d){ els.latex.value = d.latex||els.latex.value; els.scale.value = d.scale||els.scale.value; els.padding.value = d.padding||els.padding.value; els.bg.value = d.bg||els.bg.value; els.transparent.checked = !!d.transparent; }
-    }catch{} }
+    function saveDraft(){ localStorage.setItem(DRAFT_KEY, JSON.stringify({ latex: els.latex.value, scale: els.scale.value, padding: els.padding.value, bg: els.bg.value, transparent: els.transparent.checked })); }
+    function loadDraft(){ try{ const d = JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); if(d){ els.latex.value = d.latex||els.latex.value; els.scale.value = d.scale||els.scale.value; els.padding.value = d.padding||els.padding.value; els.bg.value = d.bg||els.bg.value; els.transparent.checked = !!d.transparent; } }catch{} }
 
     // Clear
     els.clearBtn.addEventListener('click', () => {
       els.latex.value=''; state.svgText=''; state.pngDataURL=''; state.pngBlob=null; els.preview.removeAttribute('src'); els.metaSize.textContent='—'; clearStatus(); saveDraft();
     });
 
-    // Rerender when options change (if live)
     ['input','change'].forEach(ev => {
       [els.latex, els.scale, els.padding, els.bg, els.transparent, els.watermarkToggle, els.watermarkText].forEach(el => {
         el.addEventListener(ev, () => { saveDraft(); if(state.live) render(); });
       });
     });
 
-    // Buttons
     els.renderBtn.addEventListener('click', render);
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); render(); }
       if((e.ctrlKey||e.metaKey) && (e.key==='s' || e.key==='S')){ e.preventDefault(); els.downloadPNGBtn.click(); }
       if((e.ctrlKey||e.metaKey) && (e.key==='k' || e.key==='K')){ e.preventDefault(); els.copyPNGBtn.click(); }
     });
 
-    // Init on load
-    loadCats();
-    applyCategoryFilter();
-    loadDraft();
-    parseShareUrl();
-    refreshHistory();
-    setTimeout(render, 50); // initial render
+    // --- Batch → ZIP ---
+    els.batchZipBtn.addEventListener('click', batchToZip);
+
+    function splitIntoJobs(text){
+      // Split by two or more newlines; trim each block; filter empty.
+      return text.split(/\r?\n\r?\n+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    
+    // New splitter: split by single line breaks, but keep multi-line TeX blocks intact.
+    function splitIntoJobsLines(text){
+      const lines = (text || '').replace(/\r\n/g, '\n').split('\n');
+      const jobs = [];
+      let i = 0;
+
+      const countDollars = (s)=> (s.match(/\$\$/g) || []).length;
+
+      while (i < lines.length) {
+        let line = (lines[i] || '').trim();
+        i++;
+        if (!line) continue;
+
+        // \[ ... \]
+        if (line.includes('\\[') && !line.includes('\\]')) {
+          let block = line;
+          while (i < lines.length) {
+            block += '\n' + lines[i];
+            if ((lines[i] || '').includes('\\]')) { i++; break; }
+            i++;
+          }
+          jobs.push(block.trim());
+          continue;
+        }
+
+        // $$ ... $$ (balance odd $$ counts)
+        if (countDollars(line) % 2 === 1) {
+          let block = line;
+          while (i < lines.length) {
+            block += '\n' + lines[i];
+            if (countDollars(lines[i] || '') % 2 === 1) { i++; break; }
+            i++;
+          }
+          jobs.push(block.trim());
+          continue;
+        }
+
+        // \begin{env} ... \end{env}
+        const m = line.match(/\\begin\{([^}]+)\}/);
+        if (m) {
+          const env = m[1];
+          if (!line.includes(`\\end{${env}}`)) {
+            let block = line;
+            while (i < lines.length) {
+              block += '\n' + lines[i];
+              if ((lines[i] || '').includes(`\\end{${env}}`)) { i++; break; }
+              i++;
+            }
+            jobs.push(block.trim());
+            continue;
+          }
+        }
+
+        jobs.push(line);
+      }
+      return jobs;
+    }
+
+async function batchToZip(){
+      clearStatus();
+      const raw = els.latex.value || '';
+      const blocks = splitIntoJobsLines(raw);
+      if(blocks.length === 0){ setStatus('Nothing to batch: separate formulas with a blank line.', 'err'); return; }
+
+      if(window.MathJax?.startup?.promise){ await MathJax.startup.promise; }
+
+      const zip = new JSZip();
+      const fPNG = zip.folder('png');
+      const fSVG = zip.folder('svg');
+      const meta = [];
+      const errors = [];
+
+      const digits = String(blocks.length).length;
+      const pad = n => String(n).padStart(digits, '0');
+      const scale = readScale();
+      const padding = readPadding();
+      const bg = readBg();
+      const addWM = els.watermarkToggle.checked;
+      const wmText = (els.watermarkText.value || 'LatRen').slice(0,64);
+
+      setStatus(`Batch: ${blocks.length} item(s)…`, 'ok');
+
+      for(let i=0;i<blocks.length;i++){
+        const idx = i+1, label = pad(idx);
+        const tex = blocks[i];
+        setStatus(`Rendering ${idx}/${blocks.length}…`, 'ok');
+
+        try{
+          const svgNode = await MathJax.tex2svgPromise(tex, {display:true});
+          const svg = svgNode.querySelector('svg');
+          if(!svg) throw new Error('No SVG produced');
+
+          svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
+          svg.removeAttribute('style');
+          if(addWM) applyWatermark(svg, wmText);
+
+          const ser = new XMLSerializer();
+          let svgText = ser.serializeToString(svg);
+          if(!svgText.startsWith('<?xml')) svgText = `<?xml version="1.0" encoding="UTF-8"?>\n` + svgText;
+
+          const { blob: pngBlob } = await svgToPng(svgText, scale, bg, padding);
+
+          fSVG.file(`${label}.svg`, svgText);
+          const pngArrayBuf = await blobToArrayBuffer(pngBlob);
+          fPNG.file(`${label}.png`, pngArrayBuf);
+
+          meta.push(`${label}\tchars=${tex.length}\tscale=${scale}\tpadding=${padding}\tbg=${bg}`);
+        }catch(err){
+          const msg = (err && (err.message || String(err))) || 'Unknown error';
+          errors.push(`Item ${label}: ${msg}\n---\n${tex}\n---\n`);
+        }
+      }
+
+      zip.file('manifest.txt', meta.join('\n'));
+      if(errors.length){ zip.file('errors.txt', errors.join('\n\n')); }
+
+      setStatus('Packaging ZIP…', 'ok');
+      const blob = await zip.generateAsync({type:'blob', compression: 'DEFLATE'});
+      download(suggestName('latren-batch','zip'), blob);
+      setStatus(`Done ✓  PNG: /png/*.png · SVG: /svg/*.svg${errors.length ? ` · ${errors.length} error(s) logged` : ''}`, 'ok');
+    }
+
+    function blobToArrayBuffer(blob){
+      return new Promise((resolve,reject)=>{
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsArrayBuffer(blob);
+      });
+    }
+
+    // Init
+    loadCats(); applyCategoryFilter(); loadDraft(); parseShareUrl(); refreshHistory();
+    // Initial render (safe content uses \[...\], not flalign*)
+    setTimeout(render, 60);
   })();
   </script>
 </body>
