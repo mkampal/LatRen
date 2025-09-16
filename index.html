@@ -294,10 +294,8 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
 
     // Templates insertion
     $$('.template').forEach(btn => btn.addEventListener('click', () => {
-      const raw = btn.getAttribute('data-snippet') || '';
-      // Normalize: turn `\\` sequences into `\` so LaTeX commands are correct
-      const normalized = raw.replace(/\\\\/g, '\\');
-      insertAtCursor(els.latex, normalized);
+      const t = btn.getAttribute('data-snippet');
+      insertAtCursor(els.latex, t);
       if(state.live) render();
     }));
 
@@ -596,8 +594,6 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
     // Init on load
     loadDraft();
     parseShareUrl();
-    // Normalize any doubled backslashes left from older templates or pasted content
-    els.latex.value = (els.latex.value || '').replace(/\\/g, '\');
     refreshHistory();
     setTimeout(render, 50); // initial render
   })();
