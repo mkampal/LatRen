@@ -21,6 +21,7 @@
       --warning: #ffb454;
       --border: #232a46;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --popover: #0c1020;
     }
     .light{
       --bg: #f7f8fb;
@@ -35,6 +36,7 @@
       --warning: #d18609;
       --border: #dfe6fb;
       --shadow: 0 10px 30px rgba(24, 35, 75, .12);
+      --popover: #fff;
     }
     html,body{height:100%}
     body{
@@ -94,6 +96,19 @@
     .row{display:flex; gap:10px; flex-wrap:wrap}
     .row > *{flex:1}
 
+    .templates-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; position:relative;}
+    .templates{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+    .template{font-size:12px; padding:6px 8px; border-radius:10px; border:1px solid var(--border); background:var(--panel-2); cursor:pointer}
+
+    /* Dropdown (category selector) */
+    .dropdown{position:absolute; right:0; top:100%; margin-top:8px; width:290px; background:var(--popover); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:10px; z-index:20;}
+    .dropdown h3{margin:0 0 8px 0; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px}
+    .dropdown .row{display:flex; gap:6px; margin:8px 0 6px 0}
+    .dropdown .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:var(--panel-2); cursor:pointer}
+    .dropdown .catlist{display:grid; grid-template-columns: 1fr 1fr; gap:8px; max-height:260px; overflow:auto; padding-right:2px}
+    .dropdown label{display:flex; align-items:center; gap:8px; font-size:13px}
+    .dropdown small{color:var(--muted); display:block; margin-top:6px}
+
     .preview-wrap{padding:16px}
     .canvas-wrap{display:flex; align-items:center; justify-content:center; min-height:260px; background: repeating-conic-gradient(#0000 0 25%, rgba(127,127,127,.1) 0 50%) 50% / 16px 16px; border:1px dashed var(--border); border-radius:12px}
     .preview{max-width:100%; height:auto; display:block}
@@ -102,9 +117,6 @@
     details.instructions{margin-top:14px; background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:12px 14px}
     details.instructions summary{cursor:pointer; font-weight:600}
     details.instructions p{color:var(--muted); margin:.4em 0}
-
-    .templates{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
-    .template{font-size:12px; padding:6px 8px; border-radius:10px; border:1px solid var(--border); background:var(--panel-2); cursor:pointer}
 
     .status{margin-top:10px; font-size:13px}
     .status.ok{color:var(--success)}
@@ -123,14 +135,15 @@
     /* Responsive */
     @media (max-width: 980px){
       .grid{grid-template-columns: 1fr}
+      .dropdown{right:auto; left:0;}
     }
   </style>
   <!-- MathJax (TeX → SVG). If you need offline use, download and host locally later. -->
   <script>
     window.MathJax = {
       tex: {
-        inlineMath: [["$","$"],["\\(","\\)"]],
-        displayMath: [["$$","$$"],["\\[","\\]"]],
+        inlineMath: [["$","$"],["\\\\(","\\\\)"]],
+        displayMath: [["$$","$$"],["\\\\[","\\\\]"]],
         packages: {'[+]': ['base', 'ams']},
         maxBuffer: 10_000
       },
@@ -169,158 +182,174 @@
             <div>
               <label for="latex" class="badge">LaTeX Input</label>
               <textarea id="latex" spellcheck="false" placeholder="Type LaTeX here...">\\begin{aligned}
-L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \right)^2 \\quad\text{with}\\quad \\hat{y}^{(i)} = f_\\theta(x^{(i)})
+L^{(k)} \\;=\\; \\frac{1}{m} \\sum_{i=1}^{m} \\left( \\hat{y}^{(i)} - y^{(i)} \\right)^2 \\quad\\text{with}\\quad \\hat{y}^{(i)} = f_\\theta(x^{(i)})
 \\end{aligned}
 </textarea>
             </div>
           </div>
 
-          <div class="templates">
-            <!-- Basics -->
-            <button class="template" data-snippet="x^2">x²</button>
-            <button class="template" data-snippet="x^{n}">xⁿ</button>
-            <button class="template" data-snippet="x_{i}">xᵢ</button>
-            <button class="template" data-snippet="\frac{a}{b}">a⁄b</button>
-            <button class="template" data-snippet="\sqrt{x}">√x</button>
-            <button class="template" data-snippet="\sqrt[n]{x}">ⁿ√x</button>
-            <button class="template" data-snippet="\lvert x \rvert">|x|</button>
-            <button class="template" data-snippet="\lVert \mathbf{x} \rVert">‖x‖</button>
-            <button class="template" data-snippet="\lfloor x \rfloor">⌊x⌋</button>
-            <button class="template" data-snippet="\lceil x \rceil">⌈x⌉</button>
-            <button class="template" data-snippet="\overline{AB}">AB̅</button>
-            <button class="template" data-snippet="\vec{v}">v⃗</button>
-            <button class="template" data-snippet="\hat{y}">ŷ</button>
-            <button class="template" data-snippet="\bar{x}">x̄</button>
-            <button class="template" data-snippet="\dot{x}">ẋ</button>
-            <button class="template" data-snippet="\ddot{x}">ẍ</button>
-            <button class="template" data-snippet="f(x)=">f(x)=</button>
-            <button class="template" data-snippet="( \, )">( )</button>
-            <button class="template" data-snippet="[ \, ]">[ ]</button>
-            <button class="template" data-snippet="\{ \, \}">{ }</button>
+          <!-- Templates Toolbar -->
+          <div class="templates-toolbar">
+            <div class="badge">Math Keys</div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="btn secondary" id="templateFilterBtn" aria-haspopup="true" aria-expanded="false">Categories ▾</button>
+              <span id="catSummary" style="font-size:12px; color:var(--muted)"></span>
+            </div>
+            <!-- Dropdown -->
+            <div class="dropdown" id="templateDropdown" hidden>
+              <h3>Show categories</h3>
+              <div class="row">
+                <button class="pill" id="selectAll">All</button>
+                <button class="pill" id="selectNone">None</button>
+                <button class="pill" id="selectIB">IB Core</button>
+              </div>
+              <div class="catlist" id="catList">
+                <!-- populated by JS -->
+              </div>
+              <small>Selections persist locally.</small>
+            </div>
+          </div>
+
+          <div class="templates" id="templates">
+             <button class="template" data-cat="basics" data-snippet="x^2">x²</button>
+            <button class="template" data-cat="basics" data-snippet="x^{n}">xⁿ</button>
+            <button class="template" data-cat="basics" data-snippet="x_{i}">xᵢ</button>
+            <button class="template" data-cat="basics" data-snippet="\frac{a}{b}">a⁄b</button>
+            <button class="template" data-cat="basics" data-snippet="\sqrt{x}">√x</button>
+            <button class="template" data-cat="basics" data-snippet="\sqrt[n]{x}">ⁿ√x</button>
+            <button class="template" data-cat="basics" data-snippet="\lvert x \rvert">|x|</button>
+            <button class="template" data-cat="basics" data-snippet="\lVert \mathbf{x} \rVert">‖x‖</button>
+            <button class="template" data-cat="basics" data-snippet="\lfloor x \rfloor">⌊x⌋</button>
+            <button class="template" data-cat="basics" data-snippet="\lceil x \rceil">⌈x⌉</button>
+            <button class="template" data-cat="basics" data-snippet="\overline{AB}">AB̅</button>
+            <button class="template" data-cat="basics" data-snippet="\vec{v}">v⃗</button>
+            <button class="template" data-cat="basics" data-snippet="\hat{y}">ŷ</button>
+            <button class="template" data-cat="basics" data-snippet="\bar{x}">x̄</button>
+            <button class="template" data-cat="basics" data-snippet="\dot{x}">ẋ</button>
+            <button class="template" data-cat="basics" data-snippet="\ddot{x}">ẍ</button>
+            <button class="template" data-cat="basics" data-snippet="f(x)=">f(x)=</button>
+            <button class="template" data-cat="basics" data-snippet="( \, )">( )</button>
+            <button class="template" data-cat="basics" data-snippet="[ \, ]">[ ]</button>
+            <button class="template" data-cat="basics" data-snippet="\{ \, \}">{ }</button>
 
             <!-- Constants & sets -->
-            <button class="template" data-snippet="\pi">π</button>
-            <button class="template" data-snippet="e^{x}">eˣ</button>
-            <button class="template" data-snippet="\infty">∞</button>
-            <button class="template" data-snippet="\mathbb{R}">ℝ</button>
-            <button class="template" data-snippet="\mathbb{Z}">ℤ</button>
-            <button class="template" data-snippet="\mathbb{N}">ℕ</button>
-            <button class="template" data-snippet="\mathbb{Q}">ℚ</button>
-            <button class="template" data-snippet="\mathbb{C}">ℂ</button>
+            <button class="template" data-cat="constants" data-snippet="\pi">π</button>
+            <button class="template" data-cat="constants" data-snippet="e^{x}">eˣ</button>
+            <button class="template" data-cat="constants" data-snippet="\infty">∞</button>
+            <button class="template" data-cat="constants" data-snippet="\mathbb{R}">ℝ</button>
+            <button class="template" data-cat="constants" data-snippet="\mathbb{Z}">ℤ</button>
+            <button class="template" data-cat="constants" data-snippet="\mathbb{N}">ℕ</button>
+            <button class="template" data-cat="constants" data-snippet="\mathbb{Q}">ℚ</button>
+            <button class="template" data-cat="constants" data-snippet="\mathbb{C}">ℂ</button>
 
             <!-- Greek -->
-            <button class="template" data-snippet="\alpha">α</button>
-            <button class="template" data-snippet="\beta">β</button>
-            <button class="template" data-snippet="\gamma">γ</button>
-            <button class="template" data-snippet="\Delta">Δ</button>
-            <button class="template" data-snippet="\theta">θ</button>
-            <button class="template" data-snippet="\lambda">λ</button>
-            <button class="template" data-snippet="\mu">μ</button>
-            <button class="template" data-snippet="\sigma">σ</button>
-            <button class="template" data-snippet="\Sigma">Σ</button>
-            <button class="template" data-snippet="\phi">φ</button>
-            <button class="template" data-snippet="\omega">ω</button>
-            <button class="template" data-snippet="\Omega">Ω</button>
-            <button class="template" data-snippet="\partial">∂</button>
+            <button class="template" data-cat="greek" data-snippet="\alpha">α</button>
+            <button class="template" data-cat="greek" data-snippet="\beta">β</button>
+            <button class="template" data-cat="greek" data-snippet="\gamma">γ</button>
+            <button class="template" data-cat="greek" data-snippet="\Delta">Δ</button>
+            <button class="template" data-cat="greek" data-snippet="\theta">θ</button>
+            <button class="template" data-cat="greek" data-snippet="\lambda">λ</button>
+            <button class="template" data-cat="greek" data-snippet="\mu">μ</button>
+            <button class="template" data-cat="greek" data-snippet="\sigma">σ</button>
+            <button class="template" data-cat="greek" data-snippet="\Sigma">Σ</button>
+            <button class="template" data-cat="greek" data-snippet="\phi">φ</button>
+            <button class="template" data-cat="greek" data-snippet="\omega">ω</button>
+            <button class="template" data-cat="greek" data-snippet="\Omega">Ω</button>
+            <button class="template" data-cat="greek" data-snippet="\partial">∂</button>
 
             <!-- Trig / exp / logs -->
-            <button class="template" data-snippet="\sin(x)">sin</button>
-            <button class="template" data-snippet="\cos(x)">cos</button>
-            <button class="template" data-snippet="\tan(x)">tan</button>
-            <button class="template" data-snippet="\csc(x)">csc</button>
-            <button class="template" data-snippet="\sec(x)">sec</button>
-            <button class="template" data-snippet="\cot(x)">cot</button>
-            <button class="template" data-snippet="\arcsin(x)">sin⁻¹</button>
-            <button class="template" data-snippet="\arccos(x)">cos⁻¹</button>
-            <button class="template" data-snippet="\arctan(x)">tan⁻¹</button>
-            <button class="template" data-snippet="\sinh(x)">sinh</button>
-            <button class="template" data-snippet="\cosh(x)">cosh</button>
-            <button class="template" data-snippet="\tanh(x)">tanh</button>
-            <button class="template" data-snippet="\ln(x)">ln</button>
-            <button class="template" data-snippet="\log(x)">log</button>
-            <button class="template" data-snippet="\log_{b}(x)">log₍ᵦ₎</button>
+            <button class="template" data-cat="trig" data-snippet="\sin(x)">sin</button>
+            <button class="template" data-cat="trig" data-snippet="\cos(x)">cos</button>
+            <button class="template" data-cat="trig" data-snippet="\tan(x)">tan</button>
+            <button class="template" data-cat="trig" data-snippet="\csc(x)">csc</button>
+            <button class="template" data-cat="trig" data-snippet="\sec(x)">sec</button>
+            <button class="template" data-cat="trig" data-snippet="\cot(x)">cot</button>
+            <button class="template" data-cat="trig" data-snippet="\arcsin(x)">sin⁻¹</button>
+            <button class="template" data-cat="trig" data-snippet="\arccos(x)">cos⁻¹</button>
+            <button class="template" data-cat="trig" data-snippet="\arctan(x)">tan⁻¹</button>
+            <button class="template" data-cat="trig" data-snippet="\sinh(x)">sinh</button>
+            <button class="template" data-cat="trig" data-snippet="\cosh(x)">cosh</button>
+            <button class="template" data-cat="trig" data-snippet="\tanh(x)">tanh</button>
+            <button class="template" data-cat="trig" data-snippet="\ln(x)">ln</button>
+            <button class="template" data-cat="trig" data-snippet="\log(x)">log</button>
+            <button class="template" data-cat="trig" data-snippet="\log_{b}(x)">log₍ᵦ₎</button>
 
             <!-- Calculus -->
-            <button class="template" data-snippet="\frac{d}{dx} f(x)">d/dx</button>
-            <button class="template" data-snippet="\frac{d^{n}}{dx^{n}} f(x)">dⁿ/dxⁿ</button>
-            <button class="template" data-snippet="\frac{\partial f}{\partial x}">∂/∂x</button>
-            <button class="template" data-snippet="\nabla f">∇f</button>
-            <button class="template" data-snippet="\int f(x)\,dx">∫</button>
-            <button class="template" data-snippet="\int_{a}^{b} f(x)\,dx">∫ₐᵇ</button>
-            <button class="template" data-snippet="\iint_{D} f(x,y)\,dA">∬</button>
-            <button class="template" data-snippet="\iiint_{V} f(x,y,z)\,dV">∭</button>
-            <button class="template" data-snippet="\lim_{x\to a} f(x)">lim</button>
-            <button class="template" data-snippet="\sum_{k=1}^{n} a_k">∑</button>
-            <button class="template" data-snippet="\prod_{k=1}^{n} a_k">∏</button>
-            <button class="template" data-snippet="\int_{-\infty}^{\infty} e^{-x^2}\,dx=\sqrt{\pi}">∫e^{-x²}</button>
+            <button class="template" data-cat="calculus" data-snippet="\frac{d}{dx} f(x)">d/dx</button>
+            <button class="template" data-cat="calculus" data-snippet="\frac{d^{n}}{dx^{n}} f(x)">dⁿ/dxⁿ</button>
+            <button class="template" data-cat="calculus" data-snippet="\frac{\partial f}{\partial x}">∂/∂x</button>
+            <button class="template" data-cat="calculus" data-snippet="\nabla f">∇f</button>
+            <button class="template" data-cat="calculus" data-snippet="\int f(x)\,dx">∫</button>
+            <button class="template" data-cat="calculus" data-snippet="\int_{a}^{b} f(x)\,dx">∫ₐᵇ</button>
+            <button class="template" data-cat="calculus" data-snippet="\iint_{D} f(x,y)\,dA">∬</button>
+            <button class="template" data-cat="calculus" data-snippet="\iiint_{V} f(x,y,z)\,dV">∭</button>
+            <button class="template" data-cat="calculus" data-snippet="\lim_{x\to a} f(x)">lim</button>
+            <button class="template" data-cat="calculus" data-snippet="\sum_{k=1}^{n} a_k">∑</button>
+            <button class="template" data-cat="calculus" data-snippet="\prod_{k=1}^{n} a_k">∏</button>
+            <button class="template" data-cat="calculus" data-snippet="\int_{-\infty}^{\infty} e^{-x^2}\,dx=\sqrt{\pi}">∫e^{-x²}</button>
 
             <!-- Algebra / relations -->
-            <button class="template" data-snippet="\cdot">·</button>
-            <button class="template" data-snippet="\times">×</button>
-            <button class="template" data-snippet="\div">÷</button>
-            <button class="template" data-snippet="\pm">±</button>
-            <button class="template" data-snippet="\mp">∓</button>
-            <button class="template" data-snippet="\le">≤</button>
-            <button class="template" data-snippet="\ge">≥</button>
-            <button class="template" data-snippet="\neq">≠</button>
-            <button class="template" data-snippet="\approx">≈</button>
-            <button class="template" data-snippet="\equiv">≡</button>
-            <button class="template" data-snippet="\propto">∝</button>
-            <button class="template" data-snippet="\sim">∼</button>
-            <button class="template" data-snippet="\in">∈</button>
-            <button class="template" data-snippet="\notin">∉</button>
-            <button class="template" data-snippet="\subseteq">⊆</button>
-            <button class="template" data-snippet="\supseteq">⊇</button>
-            <button class="template" data-snippet="\cup">∪</button>
-            <button class="template" data-snippet="\cap">∩</button>
-            <button class="template" data-snippet="\setminus">∖</button>
-            <button class="template" data-snippet="\{\,x\in\mathbb{R}\mid\,\}">{x|}</button>
-            <button class="template" data-snippet="\binom{n}{k}">nCk</button>
+            <button class="template" data-cat="algebra" data-snippet="\cdot">·</button>
+            <button class="template" data-cat="algebra" data-snippet="\times">×</button>
+            <button class="template" data-cat="algebra" data-snippet="\div">÷</button>
+            <button class="template" data-cat="algebra" data-snippet="\pm">±</button>
+            <button class="template" data-cat="algebra" data-snippet="\mp">∓</button>
+            <button class="template" data-cat="algebra" data-snippet="\le">≤</button>
+            <button class="template" data-cat="algebra" data-snippet="\ge">≥</button>
+            <button class="template" data-cat="algebra" data-snippet="\neq">≠</button>
+            <button class="template" data-cat="algebra" data-snippet="\approx">≈</button>
+            <button class="template" data-cat="algebra" data-snippet="\equiv">≡</button>
+            <button class="template" data-cat="algebra" data-snippet="\propto">∝</button>
+            <button class="template" data-cat="algebra" data-snippet="\sim">∼</button>
+            <button class="template" data-cat="algebra" data-snippet="\in">∈</button>
+            <button class="template" data-cat="algebra" data-snippet="\notin">∉</button>
+            <button class="template" data-cat="algebra" data-snippet="\subseteq">⊆</button>
+            <button class="template" data-cat="algebra" data-snippet="\supseteq">⊇</button>
+            <button class="template" data-cat="algebra" data-snippet="\cup">∪</button>
+            <button class="template" data-cat="algebra" data-snippet="\cap">∩</button>
+            <button class="template" data-cat="algebra" data-snippet="\setminus">∖</button>
+            <button class="template" data-cat="algebra" data-snippet="\{\,x\in\mathbb{R}\mid\,\}">{x|}</button>
+            <button class="template" data-cat="algebra" data-snippet="\binom{n}{k}">nCk</button>
 
             <!-- Arrows -->
-            <button class="template" data-snippet="\to">→</button>
-            <button class="template" data-snippet="\Rightarrow">⇒</button>
-            <button class="template" data-snippet="\leftrightarrow">↔</button>
-            <button class="template" data-snippet="\mapsto">↦</button>
+            <button class="template" data-cat="arrows" data-snippet="\to">→</button>
+            <button class="template" data-cat="arrows" data-snippet="\Rightarrow">⇒</button>
+            <button class="template" data-cat="arrows" data-snippet="\leftrightarrow">↔</button>
+            <button class="template" data-cat="arrows" data-snippet="\mapsto">↦</button>
 
             <!-- Matrices / vectors / cases -->
-            <button class="template" data-snippet="\begin{bmatrix} a & b \\ c & d \end{bmatrix}">2×2</button>
-            <button class="template" data-snippet="\begin{pmatrix} a \\ b \\ c \end{pmatrix}">col</button>
-            <button class="template" data-snippet="\det\!\begin{bmatrix} a & b \\ c & d \end{bmatrix}">|A|</button>
-            <button class="template" data-snippet="A^{\mathsf{T}}">ᵀ</button>
-            <button class="template" data-snippet="\begin{cases} ax+b,& x\ge 0 \\ -x,& x<0 \end{cases}">⎧⎫</button>
+            <button class="template" data-cat="matrices" data-snippet="\begin{bmatrix} a & b \\ c & d \end{bmatrix}">2×2</button>
+            <button class="template" data-cat="matrices" data-snippet="\begin{pmatrix} a \\ b \\ c \end{pmatrix}">col</button>
+            <button class="template" data-cat="matrices" data-snippet="\det\!\begin{bmatrix} a & b \\ c & d \end{bmatrix}">|A|</button>
+            <button class="template" data-cat="matrices" data-snippet="A^{\mathsf{T}}">ᵀ</button>
+            <button class="template" data-cat="matrices" data-snippet="\begin{cases} ax+b,& x\ge 0 \\ -x,& x<0 \end{cases}">⎧⎫</button>
 
             <!-- Geometry -->
-            <button class="template" data-snippet="\angle ABC">∠</button>
-            <button class="template" data-snippet="^\circ">°</button>
-            <button class="template" data-snippet="\triangle ABC">△</button>
-            <button class="template" data-snippet="\overrightarrow{AB}">AB⃗</button>
+            <button class="template" data-cat="geometry" data-snippet="\angle ABC">∠</button>
+            <button class="template" data-cat="geometry" data-snippet="^\circ">°</button>
+            <button class="template" data-cat="geometry" data-snippet="\triangle ABC">△</button>
+            <button class="template" data-cat="geometry" data-snippet="\overrightarrow{AB}">AB⃗</button>
 
             <!-- Probability / stats -->
-            <button class="template" data-snippet="\mathbb{E}[X]">𝔼[·]</button>
-            <button class="template" data-snippet="\mathrm{Var}(X)">Var</button>
-            <button class="template" data-snippet="P(A\mid B)">P(|)</button>
-            <button class="template" data-snippet="P(A\cap B)">P(∩)</button>
-            <button class="template" data-snippet="P(A\cup B)">P(∪)</button>
+            <button class="template" data-cat="probability" data-snippet="\mathbb{E}[X]">𝔼[·]</button>
+            <button class="template" data-cat="probability" data-snippet="\mathrm{Var}(X)">Var</button>
+            <button class="template" data-cat="probability" data-snippet="P(A\mid B)">P(|)</button>
+            <button class="template" data-cat="probability" data-snippet="P(A\cap B)">P(∩)</button>
+            <button class="template" data-cat="probability" data-snippet="P(A\cup B)">P(∪)</button>
 
             <!-- Complex -->
-            <button class="template" data-snippet="\Re(z)">Re</button>
-            <button class="template" data-snippet="\Im(z)">Im</button>
-            <button class="template" data-snippet="\lvert z \rvert">|z|</button>
-            <button class="template" data-snippet="\arg(z)">arg</button>
+            <button class="template" data-cat="complex" data-snippet="\Re(z)">Re</button>
+            <button class="template" data-cat="complex" data-snippet="\Im(z)">Im</button>
+            <button class="template" data-cat="complex" data-snippet="\lvert z \rvert">|z|</button>
+            <button class="template" data-cat="complex" data-snippet="\arg(z)">arg</button>
 
             <!-- Series / sequences -->
-            <button class="template" data-snippet="\sum_{k=0}^{n} r^{k}=\frac{1-r^{n+1}}{1-r},\; r\ne1">Geom Σ</button>
-            <button class="template" data-snippet="a_{n}\to L">aₙ→L</button>
+            <button class="template" data-cat="series" data-snippet="\sum_{k=0}^{n} r^{k}=\frac{1-r^{n+1}}{1-r},\; r\ne1">Geom Σ</button>
+            <button class="template" data-cat="series" data-snippet="a_{n}\to L">aₙ→L</button>
 
             <!-- Dots / spacing -->
-            <button class="template" data-snippet="\cdots">⋯</button>
-            <button class="template" data-snippet="\ldots">…</button>
-            <button class="template" data-snippet="\,">thin␠</button>
-            <button class="template" data-snippet="\;{ }">med␠</button>
-            <button class="template" data-snippet="\quad">quad␠</button>
-
-            
+            <button class="template" data-cat="dots" data-snippet="\cdots">⋯</button>
+            <button class="template" data-cat="dots" data-snippet="\ldots">…</button>
           </div>
 
           <div class="controls" aria-label="Render and export controls">
@@ -414,6 +443,14 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
       themeToggle: $('#themeToggle'),
       watermarkToggle: $('#watermarkToggle'),
       watermarkText: $('#watermarkText'),
+      templates: $('#templates'),
+      templateFilterBtn: $('#templateFilterBtn'),
+      templateDropdown: $('#templateDropdown'),
+      catList: $('#catList'),
+      catSummary: $('#catSummary'),
+      selectAll: $('#selectAll'),
+      selectNone: $('#selectNone'),
+      selectIB: $('#selectIB'),
     };
 
     const state = {
@@ -422,7 +459,103 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
       pngBlob: null,
       live: false,
       dark: false,
+      cats: new Set()
     };
+
+    // --- Category filtering ---
+    const CATS = [
+      ['basics','Basics'],
+      ['constants','Constants & sets'],
+      ['greek','Greek'],
+      ['trig','Trig / exp / logs'],
+      ['calculus','Calculus'],
+      ['algebra','Algebra / relations'],
+      ['arrows','Arrows'],
+      ['matrices','Matrices / vectors / cases'],
+      ['geometry','Geometry'],
+      ['probability','Probability / stats'],
+      ['complex','Complex'],
+      ['series','Series / sequences'],
+      ['dots','Dots / spacing'],
+    ];
+
+    const CATS_KEY = 'latren-template-cats-v1';
+
+    function loadCats(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(CATS_KEY) || 'null');
+        if(Array.isArray(arr) && arr.length){ state.cats = new Set(arr); }
+        else { state.cats = new Set(CATS.map(([k])=>k)); } // default: all
+      }catch{ state.cats = new Set(CATS.map(([k])=>k)); }
+    }
+    function saveCats(){
+      localStorage.setItem(CATS_KEY, JSON.stringify([...state.cats]));
+    }
+    function applyCategoryFilter(){
+      const allBtns = $$('.template');
+      allBtns.forEach(btn => {
+        const cat = btn.getAttribute('data-cat') || '';
+        btn.style.display = state.cats.has(cat) ? '' : 'none';
+      });
+      const total = allBtns.length;
+      const shown = allBtns.filter(b => b.style.display !== 'none').length;
+      els.catSummary.textContent = `${shown}/${total} keys visible`;
+    }
+    function buildCatUI(){
+      els.catList.innerHTML = '';
+      CATS.forEach(([key,label]) => {
+        const id = 'cat-' + key;
+        const wrap = document.createElement('label');
+        wrap.setAttribute('for', id);
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.id = id; cb.checked = state.cats.has(key);
+        cb.dataset.key = key;
+        cb.addEventListener('change', () => {
+          if(cb.checked) state.cats.add(key); else state.cats.delete(key);
+          saveCats(); applyCategoryFilter();
+        });
+        const span = document.createElement('span'); span.textContent = label;
+        wrap.appendChild(cb); wrap.appendChild(span);
+        els.catList.appendChild(wrap);
+      });
+    }
+    function openDropdown(){
+      els.templateDropdown.hidden = false;
+      els.templateFilterBtn.setAttribute('aria-expanded', 'true');
+      buildCatUI();
+      document.addEventListener('click', onDocClick, { once: true });
+      document.addEventListener('keydown', onEsc, { once: true });
+    }
+    function closeDropdown(){
+      els.templateDropdown.hidden = true;
+      els.templateFilterBtn.setAttribute('aria-expanded', 'false');
+    }
+    function onDocClick(e){
+      if(!els.templateDropdown.contains(e.target) && e.target !== els.templateFilterBtn){
+        closeDropdown();
+      } else {
+        document.addEventListener('click', onDocClick, { once: true });
+      }
+    }
+    function onEsc(e){
+      if(e.key === 'Escape') closeDropdown();
+      else document.addEventListener('keydown', onEsc, { once: true });
+    }
+
+    els.templateFilterBtn.addEventListener('click', (e)=>{
+      const opened = els.templateDropdown.hidden === false;
+      if(opened) closeDropdown(); else openDropdown();
+    });
+    els.selectAll.addEventListener('click', ()=>{
+      state.cats = new Set(CATS.map(([k])=>k)); saveCats(); buildCatUI(); applyCategoryFilter();
+    });
+    els.selectNone.addEventListener('click', ()=>{
+      state.cats = new Set(); saveCats(); buildCatUI(); applyCategoryFilter();
+    });
+    // Pragmatic preset for IB core math-heavy work
+    els.selectIB.addEventListener('click', ()=>{
+      state.cats = new Set(['basics','greek','calculus','algebra','matrices','probability','series']); saveCats(); buildCatUI(); applyCategoryFilter();
+    });
 
     // Theme
     els.themeToggle.addEventListener('change', () => {
@@ -496,7 +629,7 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
       // Optional watermark
       if(els.watermarkToggle.checked){
         const txt = (els.watermarkText.value || 'LatRen').slice(0,64);
-        const vb = (svg.getAttribute('viewBox') || '0 0 100 100').split(/\s+/).map(Number);
+        const vb = (svg.getAttribute('viewBox') || '0 0 100 100').split(/\\s+/).map(Number);
         const [vx, vy, vw, vh] = vb.length===4? vb : [0,0,100,100];
         const wm = document.createElementNS('http://www.w3.org/2000/svg','text');
         wm.setAttribute('x', String(vx + vw - 4));
@@ -731,6 +864,8 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
     });
 
     // Init on load
+    loadCats();
+    applyCategoryFilter();
     loadDraft();
     parseShareUrl();
     refreshHistory();
