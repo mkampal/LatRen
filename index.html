@@ -218,9 +218,109 @@ L^{(k)} \\;=\\; \frac{1}{m} \sum_{i=1}^{m} \left( \\hat{y}^{(i)} - y^{(i)} \righ
             <button class="template" data-snippet="\mu">μ</button>
             <button class="template" data-snippet="\sigma">σ</button>
             <button class="template" data-snippet="\Sigma">Σ</button>
-            <button class="template" data-snippet="\ph
+            <button class="template" data-snippet="\phi">φ</button>
+            <button class="template" data-snippet="\omega">ω</button>
+            <button class="template" data-snippet="\Omega">Ω</button>
+            <button class="template" data-snippet="\partial">∂</button>
 
-                        
+            <!-- Trig / exp / logs -->
+            <button class="template" data-snippet="\sin(x)">sin</button>
+            <button class="template" data-snippet="\cos(x)">cos</button>
+            <button class="template" data-snippet="\tan(x)">tan</button>
+            <button class="template" data-snippet="\csc(x)">csc</button>
+            <button class="template" data-snippet="\sec(x)">sec</button>
+            <button class="template" data-snippet="\cot(x)">cot</button>
+            <button class="template" data-snippet="\arcsin(x)">sin⁻¹</button>
+            <button class="template" data-snippet="\arccos(x)">cos⁻¹</button>
+            <button class="template" data-snippet="\arctan(x)">tan⁻¹</button>
+            <button class="template" data-snippet="\sinh(x)">sinh</button>
+            <button class="template" data-snippet="\cosh(x)">cosh</button>
+            <button class="template" data-snippet="\tanh(x)">tanh</button>
+            <button class="template" data-snippet="\ln(x)">ln</button>
+            <button class="template" data-snippet="\log(x)">log</button>
+            <button class="template" data-snippet="\log_{b}(x)">log₍ᵦ₎</button>
+
+            <!-- Calculus -->
+            <button class="template" data-snippet="\frac{d}{dx} f(x)">d/dx</button>
+            <button class="template" data-snippet="\frac{d^{n}}{dx^{n}} f(x)">dⁿ/dxⁿ</button>
+            <button class="template" data-snippet="\frac{\partial f}{\partial x}">∂/∂x</button>
+            <button class="template" data-snippet="\nabla f">∇f</button>
+            <button class="template" data-snippet="\int f(x)\,dx">∫</button>
+            <button class="template" data-snippet="\int_{a}^{b} f(x)\,dx">∫ₐᵇ</button>
+            <button class="template" data-snippet="\iint_{D} f(x,y)\,dA">∬</button>
+            <button class="template" data-snippet="\iiint_{V} f(x,y,z)\,dV">∭</button>
+            <button class="template" data-snippet="\lim_{x\to a} f(x)">lim</button>
+            <button class="template" data-snippet="\sum_{k=1}^{n} a_k">∑</button>
+            <button class="template" data-snippet="\prod_{k=1}^{n} a_k">∏</button>
+            <button class="template" data-snippet="\int_{-\infty}^{\infty} e^{-x^2}\,dx=\sqrt{\pi}">∫e^{-x²}</button>
+
+            <!-- Algebra / relations -->
+            <button class="template" data-snippet="\cdot">·</button>
+            <button class="template" data-snippet="\times">×</button>
+            <button class="template" data-snippet="\div">÷</button>
+            <button class="template" data-snippet="\pm">±</button>
+            <button class="template" data-snippet="\mp">∓</button>
+            <button class="template" data-snippet="\le">≤</button>
+            <button class="template" data-snippet="\ge">≥</button>
+            <button class="template" data-snippet="\neq">≠</button>
+            <button class="template" data-snippet="\approx">≈</button>
+            <button class="template" data-snippet="\equiv">≡</button>
+            <button class="template" data-snippet="\propto">∝</button>
+            <button class="template" data-snippet="\sim">∼</button>
+            <button class="template" data-snippet="\in">∈</button>
+            <button class="template" data-snippet="\notin">∉</button>
+            <button class="template" data-snippet="\subseteq">⊆</button>
+            <button class="template" data-snippet="\supseteq">⊇</button>
+            <button class="template" data-snippet="\cup">∪</button>
+            <button class="template" data-snippet="\cap">∩</button>
+            <button class="template" data-snippet="\setminus">∖</button>
+            <button class="template" data-snippet="\{\,x\in\mathbb{R}\mid\,\}">{x|}</button>
+            <button class="template" data-snippet="\binom{n}{k}">nCk</button>
+
+            <!-- Arrows -->
+            <button class="template" data-snippet="\to">→</button>
+            <button class="template" data-snippet="\Rightarrow">⇒</button>
+            <button class="template" data-snippet="\leftrightarrow">↔</button>
+            <button class="template" data-snippet="\mapsto">↦</button>
+
+            <!-- Matrices / vectors / cases -->
+            <button class="template" data-snippet="\begin{bmatrix} a & b \\ c & d \end{bmatrix}">2×2</button>
+            <button class="template" data-snippet="\begin{pmatrix} a \\ b \\ c \end{pmatrix}">col</button>
+            <button class="template" data-snippet="\det\!\begin{bmatrix} a & b \\ c & d \end{bmatrix}">|A|</button>
+            <button class="template" data-snippet="A^{\mathsf{T}}">ᵀ</button>
+            <button class="template" data-snippet="\begin{cases} ax+b,& x\ge 0 \\ -x,& x<0 \end{cases}">⎧⎫</button>
+
+            <!-- Geometry -->
+            <button class="template" data-snippet="\angle ABC">∠</button>
+            <button class="template" data-snippet="^\circ">°</button>
+            <button class="template" data-snippet="\triangle ABC">△</button>
+            <button class="template" data-snippet="\overrightarrow{AB}">AB⃗</button>
+
+            <!-- Probability / stats -->
+            <button class="template" data-snippet="\mathbb{E}[X]">𝔼[·]</button>
+            <button class="template" data-snippet="\mathrm{Var}(X)">Var</button>
+            <button class="template" data-snippet="P(A\mid B)">P(|)</button>
+            <button class="template" data-snippet="P(A\cap B)">P(∩)</button>
+            <button class="template" data-snippet="P(A\cup B)">P(∪)</button>
+
+            <!-- Complex -->
+            <button class="template" data-snippet="\Re(z)">Re</button>
+            <button class="template" data-snippet="\Im(z)">Im</button>
+            <button class="template" data-snippet="\lvert z \rvert">|z|</button>
+            <button class="template" data-snippet="\arg(z)">arg</button>
+
+            <!-- Series / sequences -->
+            <button class="template" data-snippet="\sum_{k=0}^{n} r^{k}=\frac{1-r^{n+1}}{1-r},\; r\ne1">Geom Σ</button>
+            <button class="template" data-snippet="a_{n}\to L">aₙ→L</button>
+
+            <!-- Dots / spacing -->
+            <button class="template" data-snippet="\cdots">⋯</button>
+            <button class="template" data-snippet="\ldots">…</button>
+            <button class="template" data-snippet="\,">thin␠</button>
+            <button class="template" data-snippet="\;{ }">med␠</button>
+            <button class="template" data-snippet="\quad">quad␠</button>
+
+            
           </div>
 
           <div class="controls" aria-label="Render and export controls">
