@@ -222,7 +222,7 @@
             <button class="template" data-cat="basics" data-snippet="\ddot{x}">ẍ</button>
             <button class="template" data-cat="basics" data-snippet="f(x)=">f(x)=</button>
             <button class="template" data-cat="basics" data-snippet="( \, )">( )</button>
-            <button class="template" data-cat="basics" data-snippet="[ \, ]">[ ]</button>
+            <button class="template" data-cat="basics" data-snippet="[ \]">[ ]</button>
             <button class="template" data-cat="basics" data-snippet="\{ \, \}">{ }</button>
 
             <!-- Constants & sets -->
@@ -364,8 +364,7 @@
             <div class="group"><label for="scale">Scale</label><input id="scale" type="number" min="0.25" step="0.25" value="2" />×</div>
             <div class="group"><label for="padding">Padding</label><input id="padding" type="number" min="0" step="2" value="20" /> px</div>
             <div class="group"><label for="bg">Background</label><input id="bg" type="color" value="#ffffff" title="Background color"/><label><input id="transparent" type="checkbox" /> transparent</label></div>
-            <div class="group"><label><input id="watermarkToggle" type="checkbox"/> watermark</label><input id="watermarkText" type="text" value="LatRen" title="Watermark text"/></div>
-          </div>
+            </div>
 
           <div class="status" id="status"></div>
 
@@ -436,8 +435,6 @@
       saveHistoryBtn: $('#saveHistoryBtn'),
       history: $('#history'),
       themeToggle: $('#themeToggle'),
-      watermarkToggle: $('#watermarkToggle'),
-      watermarkText: $('#watermarkText'),
       templates: $('#templates'),
       templateFilterBtn: $('#templateFilterBtn'),
       templateDropdown: $('#templateDropdown'),
@@ -472,8 +469,7 @@
       ['probability','Probability / stats'],
       ['complex','Complex'],
       ['series','Series / sequences'],
-      ['dots','Dots / spacing'],
-    ];
+      ['dots','Dots / spacing']];
 
     const CATS_KEY = 'latren-template-cats-v1';
 
@@ -600,8 +596,6 @@
       svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
       svg.removeAttribute('style');
 
-      if(els.watermarkToggle.checked){ applyWatermark(svg, (els.watermarkText.value || 'LatRen').slice(0,64)); }
-
       const ser = new XMLSerializer();
       let svgText = ser.serializeToString(svg);
       if(!svgText.startsWith('<?xml')) svgText = `<?xml version="1.0" encoding="UTF-8"?>\n` + svgText;
@@ -628,19 +622,6 @@
     function readPadding(){ return Math.max(0, parseInt(els.padding.value||0,10)); }
     function readBg(){ return els.transparent.checked ? 'transparent' : els.bg.value; }
     function clamp(v, mn, mx){ return Math.max(mn, Math.min(mx, v)); }
-
-    function applyWatermark(svg, txt){
-      const vb = (svg.getAttribute('viewBox') || '0 0 100 100').split(/\s+/).map(Number);
-      const [vx, vy, vw, vh] = vb.length===4? vb : [0,0,100,100];
-      const wm = document.createElementNS('http://www.w3.org/2000/svg','text');
-      wm.setAttribute('x', String(vx + vw - 4));
-      wm.setAttribute('y', String(vy + vh - 4));
-      wm.setAttribute('text-anchor','end');
-      wm.setAttribute('fill', 'rgba(127,127,127,0.35)');
-      wm.setAttribute('font-size', String(Math.max(8, Math.min(16, vw*0.04))));
-      wm.textContent = txt;
-      svg.appendChild(wm);
-    }
 
     function svgToPng(svgText, scale, bgColor, padding){
       return new Promise((resolve, reject) => {
@@ -778,7 +759,7 @@
     });
 
     ['input','change'].forEach(ev => {
-      [els.latex, els.scale, els.padding, els.bg, els.transparent, els.watermarkToggle, els.watermarkText].forEach(el => {
+      [els.latex, els.scale, els.padding, els.bg, els.transparent].forEach(el => {
         el.addEventListener(ev, () => { saveDraft(); if(state.live) render(); });
       });
     });
@@ -877,9 +858,6 @@ async function batchToZip(){
       const scale = readScale();
       const padding = readPadding();
       const bg = readBg();
-      const addWM = els.watermarkToggle.checked;
-      const wmText = (els.watermarkText.value || 'LatRen').slice(0,64);
-
       setStatus(`Batch: ${blocks.length} item(s)…`, 'ok');
 
       for(let i=0;i<blocks.length;i++){
@@ -894,8 +872,6 @@ async function batchToZip(){
 
           svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
           svg.removeAttribute('style');
-          if(addWM) applyWatermark(svg, wmText);
-
           const ser = new XMLSerializer();
           let svgText = ser.serializeToString(svg);
           if(!svgText.startsWith('<?xml')) svgText = `<?xml version="1.0" encoding="UTF-8"?>\n` + svgText;
