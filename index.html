@@ -943,7 +943,7 @@ async function batchToZip(){
       provides basic error handling. The API key below is provided by the
       user; do not share or log this key anywhere else.
     */
-    const OPENROUTER_KEY = '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';
+    const CEREBRAS_KEY = 'csk-mh2dky3twvpr4dymrn25t9fjwy6dkkt6543p2ttn82jc3w5y';
     async function solveWithAI(){
       const tex = els.latex.value.trim();
       if(!tex){
@@ -955,17 +955,17 @@ async function batchToZip(){
       try {
         // Compose the message instructing the model to solve step by step
         const messages = [
-          { role: 'system', content: 'You are a helpful mathematics tutor. Solve the provided problem step by step, explaining your reasoning. Make the formulas big and put text either in the line above or below the formulas. Make the explanations brief' },
+          { role: 'system', content: 'You are a helpful mathematics tutor. Solve the provided problem step by step, explaining your reasoning. Make the formulas big' },
           { role: 'user', content: `Solve the following problem step by step and show all work:\n\n${tex}` }
         ];
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch('https://api.cerebras.ai/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENROUTER_KEY}`
+            'Authorization': `Bearer ${CEREBRAS_KEY}`
           },
           body: JSON.stringify({
-            model: 'meta-llama/llama-4-maverick:free',
+            model: 'llama-3.3-70b',
             messages: messages
           })
         });
