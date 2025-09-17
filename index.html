@@ -943,7 +943,7 @@ async function batchToZip(){
       provides basic error handling. The API key below is provided by the
       user; do not share or log this key anywhere else.
     */
-    const OPENROUTER_KEY = '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';
+    const OPENROUTER_KEY = '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';
     async function solveWithAI(){
       const tex = els.latex.value.trim();
       if(!tex){
@@ -955,7 +955,7 @@ async function batchToZip(){
       try {
         // Compose the message instructing the model to solve step by step
         const messages = [
-          { role: 'system', content: 'You are a helpful mathematics tutor. Solve the provided problem step by step, explaining your reasoning clearly. Include the final answer at the end.' },
+          { role: 'system', content: 'You are a helpful mathematics tutor. Solve the provided problem step by step, explaining your reasoning. Make the formulas big and put text either in the line above or below the formulas. Make the explanations brief' },
           { role: 'user', content: `Solve the following problem step by step and show all work:\n\n${tex}` }
         ];
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -965,7 +965,7 @@ async function batchToZip(){
             'Authorization': `Bearer ${OPENROUTER_KEY}`
           },
           body: JSON.stringify({
-            model: 'openai/gpt-3.5-turbo',
+            model: 'meta-llama/llama-4-maverick:free',
             messages: messages
           })
         });
