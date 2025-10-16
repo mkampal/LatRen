@@ -11,22 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
     :root{
-      --bg: #0b0d12;
-      --panel: #121623;
-      --panel-2: #0e1320;
-      --text: #e6ecff;
-      --muted: #a1accf;
-      --accent: #7aa2ff;
-      --accent-2: #00d4ff;
-      --success: #6be675;
-      --danger: #ff7a84;
-      --warning: #ffb454;
-      --border: #232a46;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --popover: #0c1020;
-    }
-    .light{
-      --bg: #f7f8fb;
+--bg: #f7f8fb;
       --panel: #ffffff;
       --panel-2: #f3f6ff;
       --text: #111525;
@@ -39,7 +24,7 @@
       --border: #dfe6fb;
       --shadow: 0 10px 30px rgba(24, 35, 75, .12);
       --popover: #fff;
-    }
+}
     html,body{height:100%}
     body{
       margin:0; background:var(--bg); color:var(--text);
@@ -47,20 +32,54 @@
       line-height:1.45; letter-spacing:.2px;
     }
     .container{max-width:1200px; margin:0 auto; padding:24px;}
-    header{background:linear-gradient(135deg, var(--panel-2), transparent 60%), linear-gradient(45deg, rgba(48,94,255,.15), rgba(0,212,255,.05)); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; backdrop-filter: blur(8px);}
+    header{background:linear-gradient(135deg, var(--panel-2), transparent 60%), linear-gradient(45deg, rgba(48,94,255,.15), rgba(0,212,255,.05)); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:30; backdrop-filter: blur(8px);}
     .hdr-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
     .brand{display:flex; align-items:center; gap:12px;}
     .logo{width:40px; height:40px; border-radius:12px; background:radial-gradient(120px 50px at 30% 30%, var(--accent), transparent 70%), radial-gradient(120px 50px at 70% 70%, var(--accent-2), transparent 70%), linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)); box-shadow:var(--shadow);}
     .title{font-weight:800; font-size:20px; letter-spacing:0.5px}
     .badge{font-size:12px; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:var(--muted);}
     .toolbar{display:flex; gap:10px; align-items:center}
-    .switch{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
-    .switch input{appearance:none; width:44px; height:26px; background:var(--panel); border:1px solid var(--border); border-radius:999px; position:relative; outline:none; cursor:pointer; transition:.2s}
-    .switch input:checked{background:linear-gradient(45deg, var(--accent), var(--accent-2))}
-    .switch input::after{content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; background:#fff; border-radius:50%; transition:.2s}
-    .switch input:checked::after{left:21px}
+    /* ===== Command Bar ===== */
+    .commandbar{
+      position:sticky; top:72px; z-index:25;
+      background:var(--panel);
+      border-bottom:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+    .cmd-inner{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 24px;}
+    .cmd-left{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .cmd-right{margin-left:auto; display:flex; gap:10px; align-items:center;}
+    .menu{
+      position:relative;
+      background:var(--panel-2);
+      border:1px solid var(--border);
+      border-radius:12px;
+    }
+    .menu > summary{
+      list-style:none; cursor:pointer; padding:8px 12px; font-weight:600;
+    }
+    .menu > summary::-webkit-details-marker{display:none}
+    .menu[open] > summary{border-bottom:1px solid var(--border); border-bottom-left-radius:0; border-bottom-right-radius:0;}
+    .menu .menu-panel{
+      position:absolute; left:0; top:100%;
+      min-width:240px; background:var(--popover);
+      border:1px solid var(--border); border-radius:12px; padding:8px;
+      display:grid; grid-template-columns:1fr; gap:6px; margin-top:8px;
+      box-shadow:var(--shadow); z-index:40;
+    }
+    .menu .menu-title{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; margin:4px 8px;}
+    .btn{
+      appearance:none; border:none; background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:white; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; box-shadow:var(--shadow);
+      transition:transform .08s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:transparent; color:var(--text); border:1px solid var(--border)}
+    .btn.warn{background:linear-gradient(45deg, var(--warning), #ffda8a)}
+    .btn.good{background:linear-gradient(45deg, var(--success), #9ef7a7)}
+    .btn.bad{background:linear-gradient(45deg, var(--danger), #ffb1b7)}
+    .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--text)}
 
-    main{padding-top:18px}
+    main{padding-top:8px}
     .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:18px}
 
     .panel{background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow)}
@@ -68,7 +87,7 @@
     .panel .body{padding:16px}
 
     textarea{
-      width:100%; min-height:260px; resize:vertical; border-radius:12px; border:1px solid var(--border);
+      width:100%; min-height:220px; resize:vertical; border-radius:12px; border:1px solid var(--border);
       background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)); color:var(--text);
       font: 14px/1.5 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
       padding:14px; outline:none; box-shadow: inset 0 0 0 999px rgba(0,0,0,0);
@@ -80,15 +99,9 @@
     .controls .group label{font-size:12px; color:var(--muted)}
     input[type="number"], input[type="text"], select{background:transparent; border:1px solid var(--border); border-radius:10px; color:var(--text); padding:6px 8px; outline:none}
     input[type="color"]{appearance:none; border:none; background:transparent; width:28px; height:28px}
-    .btn{
-      appearance:none; border:none; background:linear-gradient(45deg, var(--accent), var(--accent-2)); color:white; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; box-shadow:var(--shadow);
-      transition:transform .08s ease;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.secondary{background:transparent; color:var(--text); border:1px solid var(--border)}
-    .btn.warn{background:linear-gradient(45deg, var(--warning), #ffda8a)}
-    .btn.good{background:linear-gradient(45deg, var(--success), #9ef7a7)}
-    .btn.bad{background:linear-gradient(45deg, var(--danger), #ffb1b7)}
+
+    /* Hide the original big button row; the command bar replaces it */
+    [aria-label="Render and export controls"]{display:none}
 
     .row{display:flex; gap:10px; flex-wrap:wrap}
     .row > *{flex:1}
@@ -106,7 +119,7 @@
     .dropdown small{color:var(--muted); display:block; margin-top:6px}
 
     .preview-wrap{padding:16px}
-    .canvas-wrap{display:flex; align-items:center; justify-content:center; min-height:260px; background: repeating-conic-gradient(#0000 0 25%, rgba(127,127,127,.1) 0 50%) 50% / 16px 16px; border:1px dashed var(--border); border-radius:12px}
+    .canvas-wrap{display:flex; align-items:center; justify-content:center; min-height:220px; background: repeating-conic-gradient(#0000 0 25%, rgba(127,127,127,.1) 0 50%) 50% / 16px 16px; border:1px dashed var(--border); border-radius:12px}
     .preview{max-width:100%; height:auto; display:block}
     .meta{display:flex; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:13px; margin-top:8px}
 
@@ -125,31 +138,9 @@
     .card .info small{color:var(--muted)}
     .card .actions{display:flex; gap:8px; padding:10px}
 
-    /*
-      AI solver styles. The new AI section appears below the LaTeX preview. It
-      preserves the existing aesthetic by reusing color variables and spacing.
-      The solution container wraps long text and allows scrolling when
-      necessary without breaking the overall page layout. The button reuses
-      the existing .btn style.
-    */
-    .ai-section{
-      margin-top:16px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .ai-solution{
-      background:var(--panel-2);
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:12px;
-      color:var(--text);
-      font-size:14px;
-      line-height:1.4;
-      white-space:pre-wrap;
-      max-height:300px;
-      overflow-y:auto;
-    }
+    /* AI section */
+    .ai-section{ margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .ai-solution{ background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:12px; color:var(--text); font-size:14px; line-height:1.4; white-space:pre-wrap; max-height:300px; overflow-y:auto; }
 
     footer{margin-top:32px; padding:18px 0; color:var(--muted); border-top:1px solid var(--border)}
     code.inline{font-family:"JetBrains Mono", monospace; background:rgba(122,162,255,.12); padding:.2em .45em; border-radius:6px}
@@ -157,8 +148,158 @@
     @media (max-width: 980px){
       .grid{grid-template-columns: 1fr}
       .dropdown{right:auto; left:0;}
+      .cmd-inner{gap:8px}
+      .menu .menu-panel{min-width:200px}
     }
-  </style>
+  
+    /* === Auth modal === */
+    .modal{position:fixed; inset:0; display:none; z-index:100;}
+    .modal[open]{display:block;}
+    .modal .backdrop{position:absolute; inset:0; background:rgba(17,21,37,.45); backdrop-filter:blur(2px);}
+    .modal .dialog{position:relative; max-width:380px; margin:10vh auto; background:var(--popover); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); overflow:hidden;}
+    .modal header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); background:var(--panel-2);}
+    .modal header h3{margin:0; font-size:16px;}
+    .modal .content{padding:16px; display:grid; gap:10px;}
+    .modal label{font-size:13px; color:var(--muted); display:block; margin-bottom:4px;}
+    .modal input[type="email"], .modal input[type="password"]{width:100%; padding:10px; border:1px solid var(--border); border-radius:10px; background:transparent; color:var(--text); outline:none;}
+    .modal input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(122,162,255,.25);}
+    .modal .actions{display:flex; gap:8px; justify-content:flex-end; padding:0 16px 16px 16px;}
+    .modal .linkrow{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--muted);}
+    .modal .close{appearance:none; border:1px solid var(--border); background:transparent; border-radius:10px; padding:6px 10px; cursor:pointer;}
+
+  
+/* === Tutorial (flair) === */
+#tutorialOverlay{
+  position: fixed; inset: 0; display: none; z-index: 9999;
+}
+#tutorialOverlay[aria-hidden="false"]{ display: block; }
+#tutorialOverlay.enter .tut-backdrop{ animation: tutFade .18s ease-out both; }
+#tutorialOverlay.enter .tut-card{ animation: tutPop .22s ease-out both; }
+
+@keyframes tutFade { from{ opacity: 0; } to{ opacity: 1; } }
+@keyframes tutPop { from{ opacity:0; transform: translate(-50%, -56%) scale(.96); }
+                    to  { opacity:1; transform: translate(-50%, -50%) scale(1); } }
+
+.tut-backdrop{ position:absolute; inset:0; background: rgba(17,21,37,.55); backdrop-filter: blur(1.5px); }
+
+.tut-card{
+  position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
+  width:min(640px,92vw); background:#0f1320; color:#e8ecff;
+  border:1px solid rgba(122,162,255,.25); border-radius:16px; padding:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.45); outline:none;
+}
+
+.tut-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.tut-header h3{ margin:0; font-size:1.1rem; }
+.tut-header .small{ padding:6px 10px; font-size:.9rem; }
+.tut-body{ margin-top:12px; line-height:1.45; }
+.tut-body kbd{ padding:2px 6px; border:1px solid rgba(255,255,255,.2); border-bottom-width:2px; border-radius:6px; font-size:.9em; }
+.tut-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+.tut-progress{ display:flex; gap:6px; margin-top:10px; }
+.tut-progress .dot{ width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.25); }
+.tut-progress .dot.active{ background:#7aa2ff; }
+
+/* Spotlight over target */
+.tut-spotlight{
+  position: fixed; pointer-events:none; border:2px solid #7aa2ff; border-radius:8px;
+  box-shadow: 0 0 0 9999px rgba(17,21,37,.45); transition: all .18s ease;
+}
+
+/* Tip bubble with arrow */
+.tut-tip{
+  position: fixed; max-width: 320px; background:#12182a; color:#e8ecff;
+  border:1px solid rgba(122,162,255,.25); border-radius:10px; padding:10px 12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.35); pointer-events:none; opacity:0; transform: translateY(4px);
+  transition: opacity .15s ease, transform .15s ease;
+}
+.tut-tip.show{ opacity:1; transform: translateY(0); }
+.tut-tip::after{
+  content:''; position:absolute; width:0; height:0; border:8px solid transparent;
+  border-top-color:#12182a; top:100%; left:16px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.3));
+}
+
+/* Optional highlight on target */
+.tut-highlight{ outline:2px solid #7aa2ff; outline-offset:2px; border-radius:6px; transition:outline-color .2s ease; }
+
+
+/* === Tutorial enhancements === */
+#tutorialOverlay .tut-steps{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 4px; }
+#tutorialOverlay .tut-steps .chip{
+  padding:4px 8px; border-radius:8px; border:1px solid rgba(122,162,255,.25);
+  background: rgba(255,255,255,.04); font-size:.85rem;
+}
+#tutorialOverlay .tut-steps .chip.active{ background:#1a2140; border-color:#7aa2ff; }
+
+/* Tip arrow directions */
+.tut-tip.dir-top::after{ top:100%; left:16px; border-top-color:#12182a; transform:none; }
+.tut-tip.dir-bottom::after{ bottom:100%; top:auto; left:16px; border-bottom-color:#12182a; border-top-color:transparent; transform:none; }
+.tut-tip.dir-left::after{ left:100%; top:16px; border-left-color:#12182a; border-top-color:transparent; transform:none; }
+.tut-tip.dir-right::after{ right:100%; left:auto; top:16px; border-right-color:#12182a; border-top-color:transparent; transform:none; }
+
+/* Increase contrast for Back and Skip */
+#tutorialOverlay #tutPrev, #tutorialOverlay #tutSkip{
+  color: #e8ecff !important;
+  border-color: rgba(232,236,255,.45) !important;
+  opacity: 0.95;
+}
+#tutorialOverlay #tutPrev:hover, #tutorialOverlay #tutSkip:hover{
+  opacity: 1;
+  background: rgba(255,255,255,.08);
+}
+
+
+/* === Lint overlay (red wavy underline) === */
+.editor-wrap{ position: relative; }
+.lint-overlay{
+  position:absolute; inset:0;
+  pointer-events:none;
+  margin:0; padding:0;
+  overflow:hidden;
+  white-space:pre-wrap; word-break:break-word;
+  font: inherit; line-height: inherit;
+  color: transparent;  /* make text invisible; we just show decoration underlines */
+}
+.lint-overlay .t{ color: transparent; text-decoration: none; }
+.lint-overlay .e{ color: transparent; text-decoration: underline wavy var(--danger); text-decoration-thickness: 1.5px; }
+textarea#latex{
+  background: transparent; /* so overlay is visible */
+  position: relative;
+  z-index: 1;
+}
+/* ensure overlay respects textarea padding */
+.editor-wrap .pad-proxy{ position:absolute; inset:0; pointer-events:none; padding: 10px; }
+.lint-overlay{ padding: 10px; }
+
+    /*
+     * Accessibility: provide a visible focus indicator for all interactive
+     * elements.  Many native controls in this UI explicitly remove the
+     * default outline (e.g. via outline:none).  Use :focus-visible to
+     * restore a consistent high‑contrast ring for keyboard users.  The
+     * outline color is tied to the accent theme variable.
+     */
+    :focus-visible{
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+  /* Confirm row styles */
+  #accLogoutConfirm{
+    display:none;
+    border:1px solid var(--border);
+    background: var(--panel-2);
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 6px;
+  }
+  #accLogoutConfirm .confirm-title{
+    font-weight: 600;
+    margin: 0 0 6px 0;
+  }
+  #accLogoutConfirm .confirm-actions{
+    display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
+  }
+        </style>
 
   <!-- MathJax (TeX → SVG). -->
   <script>
@@ -174,8 +315,84 @@
     };
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <style id="patch-pass-ui-css">
+      .pass-wrap{position:relative; display:flex; align-items:center;}
+      .pass-wrap input{flex:1 1 auto; padding-right:32px;}
+      .toggle-pass{position:absolute; right:6px; top:50%; transform:translateY(-50%); border:none; background:transparent; cursor:pointer; padding:4px; border-radius:8px;}
+      .toggle-pass:focus{outline:2px solid var(--accent);}
+      .strength-row{margin:6px 0 0 0; font-size:12px}
+      #passStrength{position:relative; height:6px; background:#eee; border-radius:3px; overflow:hidden}
+      #passStrength .Fill{position:absolute; inset:0 100% 0 0; background:#e53935}
+      #passStrengthLabel{margin-top:6px; color:#666}
+      #passStrengthFill.bad{ background: var(--danger, #e53935) !important; }
+      #passStrengthFill.ok{ background: var(--warning, #f6a609) !important; }
+      #passStrengthFill.good{ background: var(--success, #1fa97a) !important; }
+    </style>
+    
+<style id="account-menu-css">
+  /* Move legacy header Logout into the account menu */
+  #logoutBtn { display: none !important; }
+
+  /* Account options overlay, matching tutorial visuals */
+  #accountOverlay { position: fixed; inset: 0; display: none; z-index: 10000; }
+  #accountOverlay[aria-hidden="false"] { display: block; }
+  #accountOverlay.enter .tut-backdrop { animation: tutFade .18s ease-out both; }
+  #accountOverlay.enter .tut-card { animation: tutPop .22s ease-out both; }
+
+  /* Slightly narrower than tutorial card */
+  #accountOverlay .tut-card { width: min(420px, 92vw); outline: none; }
+  #accountOverlay .tut-body { display: grid; gap: 10px; }
+  /* Improve legibility of Account Options text & buttons (font color only) */
+  #accountOverlay .tut-card { color: #e8ecff; }
+  #accountOverlay .tut-header h3 { color: #e8ecff; }
+  #accountOverlay .btn.secondary { color: #e8ecff; }
+  #accountOverlay .btn.ghost { color: #e8ecff; }
+  #accountOverlay .confirm-title { color: #e8ecff; }
+  /* Account menu internal panels */
+  #accountOverlay .acc-grid { display: grid; gap: 10px; }
+  #accountOverlay .acc-actions { display: grid; gap: 8px; }
+  #accountOverlay .acc-panel { display: none; padding-top: 6px; }
+  #accountOverlay .acc-panel[aria-hidden="false"] { display: block; }
+  #accountOverlay .msg { font-size: 13px; margin-top: 6px; }
+  #accountOverlay .msg.ok { color: #9EE493; }
+  #accountOverlay .msg.err { color: #FFB4A2; }
+  #accountOverlay input[type="email"], 
+  #accountOverlay input[type="password"], 
+  #accountOverlay input[type="text"] { width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid #a3a3a3; background: #0b0f1a; color: #e8ecff; }
+  #accountOverlay label { font-size: 13px; opacity: .9; }
+  #accountOverlay .row { display: grid; gap: 4px; }
+  #accountOverlay .danger-note { font-size: 12px; opacity: .85; }
+</style>
+
+<style id="history-confirm-css">
+  /* History delete confirmation overlay (reuses tutorial visuals for consistency) */
+  #historyConfirm { position: fixed; inset: 0; display: none; z-index: 10050; }
+  #historyConfirm[aria-hidden="false"] { display: block; }
+  #historyConfirm.enter .tut-backdrop { animation: tutFade .18s ease-out both; }
+  #historyConfirm.enter .tut-card { animation: tutPop .22s ease-out both; }
+  #historyConfirm .tut-card { width: min(400px, 92vw); outline: none; }
+  #historyConfirm .tut-body p { margin: 0; }
+</style>
+
+
+<style>
+
+/* --- Patch: keep Edit ▾ → "Generate from Text" textarea inside its dropdown --- */
+.menu .menu-panel #genText{
+  width: 100%;
+  max-width: 420px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+@media (max-width: 600px){
+  .menu .menu-panel #genText{ max-width: 100%; }
+}
+/* --- End patch --- */
+
+</style>
 </head>
-<body class="light" id="body">
+<body id="body">
   <header>
     <div class="container hdr-inner">
       <div class="brand">
@@ -185,14 +402,162 @@
           <div class="badge">Standalone LaTeX → Image Toolkit</div>
         </div>
       </div>
+      
       <div class="toolbar">
-        <label class="switch" title="Toggle theme">
-          <input id="themeToggle" type="checkbox" />
-          <span>Dark mode</span>
-        </label>
+        <span id="welcomeMsg" style="display:none; font-weight:600; margin-right:8px;"></span>
+        <button class="btn secondary" id="loginBtn" type="button" aria-haspopup="dialog">Log in</button>
+        <button class="btn secondary" id="accountOptionsBtn" type="button" style="display:none;">Account options</button>
+        <button class="btn secondary" id="logoutBtn" type="button" style="display:none;">Logout</button>
       </div>
     </div>
   </header>
+
+  <!-- Auth Modal -->
+  <div class="modal" id="authModal" aria-hidden="true">
+    <div class="backdrop" id="authBackdrop" data-close="true"></div>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <header>
+        <h3 id="authTitle">Log in</h3>
+        <button class="close" type="button" data-close="true" aria-label="Close">✕</button>
+      </header>
+      <div class="content">
+        <!-- Name row: hidden by default; shown during sign‑up -->
+        <div id="authNameRow" style="display:none;">
+          <label for="authName">Name</label>
+          <input id="authName" type="text" placeholder="Your name" autocomplete="name" />
+        </div>
+        <!-- Email row: visible in all modes -->
+        <div id="authEmailRow">
+          <label for="authEmail">Email</label>
+          <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <!-- Password row: shown during login and sign‑up -->
+        <div id="authPassRow">
+          <label for="authPass">Password</label>
+          <input id="authPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <!-- Confirm password row: only shown during sign‑up -->
+        <div id="authConfirmRow" style="display:none;">
+          <label for="authConfirm">Confirm password</label>
+          <div class="pass-wrap">
+            <input id="authConfirm" type="password" placeholder="Confirm password" autocomplete="new-password" />
+            <button class="toggle-pass" type="button" data-toggle-target="authConfirm" aria-label="Show password">👁</button>
+          </div>
+        <!-- Password strength meter: only shown during sign‑up -->
+        <div id="passStrengthContainer" class="strength-row" style="display:none;">
+          <div id="passStrength" class="Strength"><span id="passStrengthFill" class="Fill"></span></div>
+          <div id="passStrengthLabel" class="StrengthLabel" aria-live="polite"></div>
+        </div>
+            
+        </div>
+            
+        <!-- New password row: shown during password reset -->
+        <div id="authNewPassRow" style="display:none;">
+          <label for="authNewPass">New password</label>
+          <input id="authNewPass" type="password" placeholder="New password" autocomplete="new-password" />
+        </div>
+        <!-- Code row: shown during email verification and reset flows -->
+        <div id="authCodeRow" style="display:none;">
+          <label for="authCode">Code</label>
+          <input id="authCode" type="text" placeholder="Enter code" />
+        </div>
+        <!-- Link row: dynamic text and primary secondary actions -->
+        <div class="linkrow" id="authLinkRow">
+          <span id="authLinkText">Don’t have an account?</span>
+          <button class="btn ghost" id="createAccountBtn" type="button">Create one</button>
+          <button class="btn ghost" id="forgotPassBtn" type="button" style="display:none;">Forgot password?</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" type="button" data-close="true">Cancel</button>
+        <!-- Resend code button: only visible when verifying or resetting -->
+        <button class="btn secondary" id="authResendBtn" type="button" style="display:none;">Resend code</button>
+        <button class="btn" id="authSubmit" type="button">Log in</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Sticky command bar with dropdown 'folders' -->
+  <nav class="commandbar" aria-label="Primary actions">
+    <div class="cmd-inner container">
+      <div class="cmd-left">
+        <details class="menu">
+          <summary>Render ▾</summary>
+          <div class="menu-panel">
+            <div class="menu-title">Render</div>
+            <button class="btn" data-action="render" type="button">Render (Ctrl/⌘+Enter)</button>
+            <button class="btn secondary" id="liveProxy" data-action="live" type="button">Live: Off</button>
+            <button class="btn secondary" data-action="fitwidth" type="button">Fit to preview width</button>
+          </div>
+        </details>
+
+        <details class="menu">
+          <summary>Export ▾</summary>
+          <div class="menu-panel">
+            <div class="menu-title">Download</div>
+            <button class="btn good" data-action="dlpng" type="button">Download PNG (Ctrl/⌘+S)</button>
+            <button class="btn secondary" data-action="dlsvg" type="button">Download SVG</button>
+            <div class="menu-title">Copy</div>
+            <button class="btn secondary" data-action="cpng" type="button">Copy PNG</button>
+            <button class="btn secondary" data-action="csvg" type="button">Copy SVG</button>
+            <button class="btn secondary" data-action="copy_svgcode" type="button">Copy SVG code</button>
+            <div class="menu-title">Share</div>
+            <button class="btn secondary" data-action="share_open" type="button">Open share link</button>
+            <div class="menu-title">Batch</div>
+            <div style="display:grid; gap:6px; padding:6px;">
+              <label style="display:flex; gap:6px; align-items:center; font-size:13px;">Delimiter:
+                <select id="batchDelimiterSel">
+                  <option value="blank">Blank line</option>
+                  <option value="dash">---</option>
+                  <option value="regex">Regex</option>
+                </select>
+                <input id="batchRegexInput" type="text" placeholder="^--+$" style="display:none; flex:1;" />
+              </label>
+              <button class="btn warn" data-action="batch" type="button">Batch → ZIP</button>
+              
+            </div>
+          </div>
+        </details>
+
+        <details class="menu">
+          <summary>Share ▾</summary>
+          <div class="menu-panel">
+            <button class="btn secondary" data-action="share" type="button">Share link</button>
+            <button class="btn secondary" data-action="savehist" type="button" style="display:none">Save to History</button>
+          </div>
+        </details>
+
+        <details class="menu">
+          <summary>Edit ▾</summary>
+          <div class="menu-panel">
+            <div class="menu-title">Document</div>
+            <button class="btn bad" data-action="clear" type="button">Clear (keep settings)</button>
+            <button class="btn bad" data-action="reset_all" type="button">Reset ALL settings</button>
+
+            <div class="menu-title">Generate from Text</div>
+            <div style="display:grid; gap:6px; padding:6px;">
+              <label style="font-size:13px; color:var(--muted)">Describe the math problem in plain English:</label>
+              <textarea id="genText" rows="3" placeholder="e.g., Solve the quadratic equation x^2 - 5x + 6 = 0" spellcheck="false" style="min-height:90px"></textarea>
+<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <button class="btn good" id="genInsertBtn" type="button">Generate → Insert LaTeX</button>
+                <span id="genStatus" style="font-size:13px; color:var(--muted)"></span>
+              </div>
+            </div>
+
+          </div>
+        </details>
+      </div>
+
+      <div class="cmd-right">
+        <div class="controls" aria-label="Quick options" style="margin:0">
+          <div class="group"><label for="scale">Scale</label><input id="scale" type="number" min="0.25" step="0.25" value="2" />×</div>
+          <div class="group"><label for="padding">Padding</label><input id="padding" type="number" min="0" step="2" value="20" /> px</div>
+          <div class="group"><label for="bg">BG</label><input id="bg" type="color" value="#ffffff" title="Background color"/><label><input id="transparent" type="checkbox" /> transparent</label></div>
+        </div>
+      </div>
+    </div>
+  </nav>
 
   <main class="container">
     <div class="grid">
@@ -202,11 +567,11 @@
           <div class="row">
             <div>
               <label for="latex" class="badge">LaTeX Input</label>
-              <textarea id="latex" spellcheck="false" placeholder="Type LaTeX here...">\[
+              <div class="editor-wrap"><textarea id="latex" spellcheck="false" placeholder="Type LaTeX here...">\[
 \text{Welcome to LatRen! Render: Ctrl/⌘+Enter · PNG: Ctrl/⌘+S · Copy: Ctrl/⌘+K}
 \]
 \[\text{Separate formulas with a blank line for Batch → ZIP. Use single backslashes.}\]
-</textarea>
+</textarea><pre id="latexLintOverlay" class="lint-overlay" aria-hidden="true"></pre></div>
             </div>
           </div>
 
@@ -373,6 +738,7 @@
             <button class="template" data-cat="dots" data-snippet="\ldots">…</button>
           </div>
 
+          <!-- Original controls (hidden by CSS) kept for JS compatibility -->
           <div class="controls" aria-label="Render and export controls">
             <button class="btn" id="renderBtn" type="button">Render (Ctrl/⌘+Enter)</button>
             <button class="btn secondary" id="liveToggle" aria-pressed="false" type="button">Live: Off</button>
@@ -381,27 +747,12 @@
             <button class="btn secondary" id="copyPNGBtn" type="button">Copy PNG</button>
             <button class="btn secondary" id="copySVGBtn" type="button">Copy SVG</button>
             <button class="btn secondary" id="shareBtn" type="button">Share link</button>
-            <button class="btn warn" id="saveHistoryBtn" type="button">Save to History</button>
+            <button class="btn warn" id="saveHistoryBtn" type="button" style="display:none">Save to History</button>
             <button class="btn bad" id="clearBtn" type="button">Clear</button>
             <button class="btn warn" id="batchZipBtn" type="button" title="Split by blank lines → render each → ZIP PNG+SVG">Batch → ZIP</button>
           </div>
 
-          <div class="controls" aria-label="Output options">
-            <div class="group"><label for="scale">Scale</label><input id="scale" type="number" min="0.25" step="0.25" value="2" />×</div>
-            <div class="group"><label for="padding">Padding</label><input id="padding" type="number" min="0" step="2" value="20" /> px</div>
-            <div class="group"><label for="bg">Background</label><input id="bg" type="color" value="#ffffff" title="Background color"/><label><input id="transparent" type="checkbox" /> transparent</label></div>
-            </div>
-
-          <div class="status" id="status"></div>
-
-          <details class="instructions">
-            <summary>How to use</summary>
-            <p>Type math LaTeX (e.g., environments like <code class="inline">aligned</code>, <code class="inline">cases</code>, <code class="inline">bmatrix</code>). Use <code class="inline">$$...$$</code> or block environments — full documents with <code class="inline">\documentclass</code> are <em>not</em> supported.</p>
-            <p>Click <strong>Render</strong>, then <strong>Download PNG/SVG</strong>. Adjust <em>scale</em> for resolution and <em>padding</em> for margins. Toggle <em>transparent</em> background for overlays. Use <strong>Share link</strong> to encode your formula in the URL.</p>
-            <p>Shortcuts: <code class="inline">Ctrl/⌘+Enter</code> render · <code class="inline">Ctrl/⌘+S</code> download PNG · <code class="inline">Ctrl/⌘+K</code> copy PNG</p>
-            <p><strong>Batch → ZIP:</strong> Separate formulas with a blank line. Each block renders to both SVG and PNG inside a ZIP (plus manifest and any errors).</p>
-          </details>
-        </div>
+          <div class="status" id="status"></div></div>
       </section>
 
       <section class="panel" aria-labelledby="preview-title">
@@ -416,9 +767,6 @@
             <div id="meta-bg">BG: #FFFFFF</div>
           </div>
 
-          <!-- AI solver section: displays a button to trigger the AI and a
-               container for the resulting explanation. This stays within
-               the preview panel to avoid altering the overall layout. -->
           <div class="ai-section" id="aiSection">
             <button class="btn" id="solveBtn" type="button">Solve</button>
             <div id="aiSolution" class="ai-solution"></div>
@@ -427,8 +775,8 @@
       </section>
     </div>
 
-    <section class="panel" style="margin-top:18px" aria-labelledby="history-title">
-      <h2 id="history-title">History (local)</h2>
+    <section class="panel" style="margin-top:18px; display:none" aria-labelledby="history-title">
+      <h2 id="history-title">History (Only available when logged in)</h2>
       <div class="body">
         <div class="history" id="history"></div>
       </div>
@@ -468,7 +816,6 @@
       shareBtn: $('#shareBtn'),
       saveHistoryBtn: $('#saveHistoryBtn'),
       history: $('#history'),
-      themeToggle: $('#themeToggle'),
       templates: $('#templates'),
       templateFilterBtn: $('#templateFilterBtn'),
       templateDropdown: $('#templateDropdown'),
@@ -481,6 +828,14 @@
       // AI solver elements
       solveBtn: $('#solveBtn'),
       aiSolution: $('#aiSolution'),
+      // Command bar proxies
+      liveProxy: $('#liveProxy'),
+      // Generate-from-text elements
+      genText: document.getElementById('genText'),
+      genDisplay: document.getElementById('genDisplay'),
+      genInsertBtn: document.getElementById('genInsertBtn'),
+      genStatus: document.getElementById('genStatus'),
+
     };
 
     const state = {
@@ -489,8 +844,147 @@
       pngBlob: null,
       live: false,
       dark: false,
-      cats: new Set()
+      cats: new Set(),
+      
+      batchDelimiter: 'blank'
     };
+    // Expose commonly used objects on the global scope so that the auth
+    // module can interact with them.  Without doing this, the second script
+    // cannot access the local variables due to module scoping.
+    window.latrenEls = els;
+    window.latrenState = state;
+    // Track the currently authenticated user's email.  This is updated by the
+    // auth script; when null or undefined the user is treated as logged out.
+    window.currentUserEmail = null;
+
+    
+
+    
+    
+    /* Proxy clicks from the command bar to the original (hidden) buttons */
+    
+    // Direct action handlers for command-bar buttons (no proxying)
+    function doAction(act){
+      switch(act){        case 'fitwidth':
+          (async () => {
+            if(!state.svgText) await render();
+            // measure intrinsic SVG width via temp image
+            const svgText = state.svgText;
+            const img = new Image();
+            const blob = new Blob([svgText], {type:'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            await new Promise((res, rej)=>{ img.onload = ()=>res(); img.onerror = rej; img.src = url; });
+            const wrap = document.querySelector('.canvas-wrap');
+            const avail = Math.max(50, (wrap ? wrap.clientWidth : 600) - 2*readPadding());
+            const newScale = Math.max(0.1, Math.min(8, avail / img.width));
+            els.scale.value = newScale.toFixed(2);
+            URL.revokeObjectURL(url);
+            render();
+          })();
+          break;
+        case 'render':
+          render();
+          break;
+        case 'live':
+          els.liveToggle.click(); // reuse existing handler
+          syncLiveLabel();
+          break;
+        case 'dlpng':
+          (async () => {
+            if(!state.pngBlob) await render();
+            download(suggestName('latren','png'), state.pngBlob);
+          })();
+          break;
+        case 'dlsvg':
+          if(!state.svgText){ setStatus('Nothing to download. Render first.', 'err'); return; }
+          download(suggestName('latren','svg'), new Blob([state.svgText], {type:'image/svg+xml'}));
+          break;
+        case 'cpng':
+          (async () => {
+            try{
+              if(!state.pngBlob) await render();
+              await navigator.clipboard.write([ new ClipboardItem({ 'image/png': state.pngBlob }) ]);
+              setStatus('PNG copied to clipboard ✓', 'ok');
+            }catch(err){ setStatus('Clipboard not available: ' + err, 'err'); }
+          })();
+          break;
+        case 'csvg':
+          (async () => {
+            try{
+              if(!state.svgText) await render();
+              const type = 'image/svg+xml';
+              const blob = new Blob([state.svgText], {type});
+              await navigator.clipboard.write([ new ClipboardItem({ [type]: blob }) ]);
+              setStatus('SVG copied to clipboard ✓', 'ok');
+            }catch(err){ setStatus('Clipboard not available: ' + err, 'err'); }
+          })();
+          break;
+        case 'batch':
+          batchToZip();
+          break;
+        case 'share':
+          els.shareBtn.click();
+          break;
+        case 'share_open':
+          window.open(buildShareUrl(), '_blank');
+          break;        case 'copy_svgcode':
+          (async () => {
+            try{
+              if(!state.svgText) await render();
+              await navigator.clipboard.writeText(state.svgText);
+              setStatus('SVG code copied ✓', 'ok');
+            }catch(e){ setStatus('Copy failed: '+e, 'err'); }
+          })();
+          break;
+        case 'reset_all':
+          try{
+            localStorage.clear();
+            setStatus('Settings cleared. Reloading…', 'ok');
+            setTimeout(()=>location.reload(), 300);
+          }catch(e){ setStatus('Reset failed: '+e, 'err'); }
+          break;
+        case 'savehist':
+          els.saveHistoryBtn.click();
+          break;
+        case 'clear':
+          els.clearBtn.click();
+          break;
+      }
+    }
+
+    $$('[data-action]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const act = btn.getAttribute('data-action');
+        if(act){ e.preventDefault(); e.stopPropagation(); doAction(act); }
+      });
+    });
+
+
+    // Keep Live label in sync
+    const syncLiveLabel = () => {
+      const on = els.liveToggle.getAttribute('aria-pressed') === 'true' || els.liveToggle.textContent.includes('On');
+      if(els.liveProxy){ els.liveProxy.textContent = `Live: ${on ? 'On' : 'Off'}`; }
+    };
+
+    // === Ensure only one dropdown menu is open at a time ===
+    const MENUS = $$('.menu');
+    MENUS.forEach(menu => {
+      menu.addEventListener('toggle', () => {
+        if (menu.open) {
+          MENUS.forEach(other => { if (other !== menu) other.removeAttribute('open'); });
+          // If any menu opens, also close the Math Keys category dropdown
+          if (!els.templateDropdown.hidden) closeDropdown();
+        }
+      });
+      // When clicking any summary, close the Math Keys dropdown proactively
+      const summary = menu.querySelector('summary');
+      if (summary) {
+        summary.addEventListener('click', () => {
+          if (!els.templateDropdown.hidden) closeDropdown();
+        });
+      }
+    });
+
 
     // --- Category filtering ---
     const CATS = [
@@ -547,6 +1041,8 @@
       });
     }
     function openDropdown(){
+      // Close any open top menus when opening Math Keys dropdown
+      $$('.menu[open]').forEach(m => m.removeAttribute('open'));
       els.templateDropdown.hidden = false;
       els.templateFilterBtn.setAttribute('aria-expanded', 'true');
       buildCatUI();
@@ -575,14 +1071,7 @@
     els.selectNone.addEventListener('click', ()=>{ state.cats = new Set(); saveCats(); buildCatUI(); applyCategoryFilter(); });
     els.selectIB.addEventListener('click', ()=>{ state.cats = new Set(['basics','greek','calculus','algebra','matrices','probability','series']); saveCats(); buildCatUI(); applyCategoryFilter(); });
 
-    // Theme
-    els.themeToggle.addEventListener('change', () => {
-      state.dark = els.themeToggle.checked;
-      document.body.classList.toggle('light', !state.dark);
-      document.body.classList.toggle('dark', state.dark);
-    });
-
-    // Template insertion: normalize to single backslashes
+        // Template insertion: normalize to single backslashes
     $$('.template').forEach(btn => btn.addEventListener('click', () => {
       const raw = btn.getAttribute('data-snippet') || '';
       const single = raw.replace(/\\\\/g, '\\');
@@ -604,12 +1093,17 @@
       state.live = !state.live;
       els.liveToggle.setAttribute('aria-pressed', String(state.live));
       els.liveToggle.textContent = `Live: ${state.live ? 'On' : 'Off'}`;
+      syncLiveLabel();
       if(state.live) render();
     });
 
     // Status helpers
     function setStatus(msg, cls){ els.status.textContent = msg; els.status.className = 'status ' + (cls || ''); }
     function clearStatus(){ els.status.textContent = ''; els.status.className = 'status'; }
+    // Make status functions globally accessible so other scripts (e.g. auth)
+    // can show messages without reimplementing them.
+    window.setStatus = setStatus;
+    window.clearStatus = clearStatus;
 
     // Render: TeX -> SVG -> PNG
     async function render(){
@@ -680,8 +1174,11 @@
           canvas.toBlob(b => {
             URL.revokeObjectURL(url);
             if(!b) return reject(new Error('Failed to create PNG blob'));
-            resolve({blob: b, dataURL: URL.createObjectURL(b), canvas});
+            // Use a real data URL for server upload
+            const dataURL = canvas.toDataURL('image/png');
+            resolve({ blob: b, dataURL, canvas });
           }, 'image/png');
+
         };
         img.onerror = e => { URL.revokeObjectURL(url); reject(e); };
         img.src = url;
@@ -755,35 +1252,155 @@
     function b64dec(str){ return decodeURIComponent(escape(atob(str))); }
     function suggestName(base, ext){ const t = new Date().toISOString().replace(/[:.]/g,'-'); return `${base}-${t}.${ext}`; }
 
-    // History (localStorage)
-    const HISTORY_KEY = 'latren-history-v1';
-    function loadHistory(){ try{ const arr = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }catch{ return []; } }
+    // History (server‑backed)
+    // We intentionally avoid using localStorage for history.  History items are
+    // persisted on the server per user.  If the user is not authenticated,
+    // saving history is disabled from the UI and addToHistory() will show an
+    // error.  loadHistory() now returns an empty array to avoid accidental use.
+    function loadHistory(){ return []; }
+    /**
+     * Render a single history card into the DOM.  Each card shows the preview,
+     * timestamp, and action buttons to load, download the PNG, or delete the
+     * entry.  When the delete button is clicked an authenticated DELETE request
+     * is sent; on success the card is removed.  Newer cards should be
+     * prepended so that the newest entry appears first.
+     */
     function saveHistoryCard(item){
       const card = document.createElement('div');
       card.className = 'card';
-      const img = document.createElement('img'); img.src = item.pngURL; img.alt = 'Formula preview';
-      const info = document.createElement('div'); info.className='info';
-      const small = document.createElement('small'); small.textContent = new Date(item.time).toLocaleString(); info.appendChild(small);
-      const actions = document.createElement('div'); actions.className='actions';
-      const btnUse = document.createElement('button'); btnUse.className='btn secondary'; btnUse.textContent='Load';
-      const btnDL = document.createElement('button'); btnDL.className='btn'; btnDL.textContent='PNG';
-      btnUse.onclick = () => { els.latex.value = item.latex; if(state.live) render(); window.scrollTo({top:0, behavior:'smooth'}); };
-      btnDL.onclick = () => fetch(item.pngURL).then(r=>r.blob()).then(b=>download(suggestName('latren','png'), b));
-      actions.appendChild(btnUse); actions.appendChild(btnDL);
-      card.appendChild(img); card.appendChild(info); card.appendChild(actions);
+      // Image preview
+      const img = document.createElement('img');
+      img.src = item.pngURL;
+      img.alt = 'Formula preview';
+      // Metadata
+      const info = document.createElement('div');
+      info.className = 'info';
+      const small = document.createElement('small');
+      small.textContent = new Date(item.time).toLocaleString();
+      info.appendChild(small);
+      // Action buttons
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      // Load button: insert the LaTeX into the editor and re-render if live
+      const btnUse = document.createElement('button');
+      btnUse.className = 'btn secondary';
+      btnUse.textContent = 'Load';
+      btnUse.onclick = () => {
+        els.latex.value = item.latex;
+        if(state.live) render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      // PNG download button
+      const btnDL = document.createElement('button');
+      btnDL.className = 'btn';
+      btnDL.textContent = 'PNG';
+      btnDL.onclick = () => {
+        fetch(item.pngURL, { credentials: 'same-origin' })
+          .then(r => r.blob())
+          .then(b => download(suggestName('latren','png'), b))
+          .catch(() => setStatus('Failed to download PNG', 'err'));
+      };
+      // Delete button: removes the history item from the server and DOM
+      const btnDel = document.createElement('button');
+      btnDel.className = 'btn bad';
+      btnDel.textContent = 'Delete';
+      btnDel.onclick = async () => {
+        // Confirm deletion before sending a request.
+        return (typeof window.openHistoryDeleteConfirm==='function') ? window.openHistoryDeleteConfirm(item.id, card) : void 0;
+        // Avoid sending a request if no id is present.
+        if(!item.id){ card.remove(); return; }
+        try{
+          const resp = await fetch(`/api/history/${item.id}`, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          });
+          if(resp.ok){
+            card.remove();
+            setStatus('Deleted from history ✓', 'ok');
+          }else{
+            const data = await resp.json().catch(()=>null);
+            const msg = (data && data.error) || 'Failed to delete';
+            setStatus(msg, 'err');
+          }
+        }catch(err){
+          setStatus('Failed to delete: ' + err, 'err');
+        }
+      };
+      actions.appendChild(btnUse);
+      actions.appendChild(btnDL);
+      actions.appendChild(btnDel);
+      card.appendChild(img);
+      card.appendChild(info);
+      card.appendChild(actions);
       els.history.prepend(card);
     }
-    function refreshHistory(){ els.history.innerHTML = ''; loadHistory().forEach(saveHistoryCard); }
-    function addToHistory(){
-      if(!state.pngDataURL) { setStatus('Render first to save history.', 'err'); return; }
-      const items = loadHistory();
-      const entry = { latex: els.latex.value, pngURL: state.pngDataURL, time: Date.now() };
-      items.unshift(entry); while(items.length > 24) items.pop();
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
-      saveHistoryCard(entry);
-      setStatus('Saved to history ✓', 'ok');
+    // Expose the card helper globally so that the auth script can reuse it
+    window.saveHistoryCard = saveHistoryCard;
+    /**
+     * Clear all history cards from the UI.  The server‑backed history is loaded
+     * asynchronously elsewhere; this function simply wipes the container.
+     */
+    function refreshHistory(){
+      els.history.innerHTML = '';
     }
-    els.saveHistoryBtn.addEventListener('click', addToHistory);
+    /**
+     * Persist the currently rendered formula into the user's history on the
+     * server.  Requires the user to be authenticated; if not, a status
+     * message is shown.  On success a new card is prepended to the grid and
+     * older cards beyond 24 entries are removed from the DOM.
+     */
+    async function addToHistory(){
+      if(!state.pngDataURL){
+        setStatus('Render first to save history.', 'err');
+        return;
+      }
+      // ensure the user is logged in; window.currentUserEmail is set by the auth script
+      if(!window.currentUserEmail){
+        setStatus('Please log in to save history.', 'err');
+        return;
+      }
+      const latex = els.latex.value;
+      const pngDataURL = state.pngDataURL;
+      els.saveHistoryBtn.disabled = true;
+      try{
+        const resp = await fetch('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ latex, pngDataURL })
+        });
+        if(!resp.ok){
+          const data = await resp.json().catch(()=>null);
+          const msg = (data && data.error) || 'Failed to save history';
+          setStatus(msg, 'err');
+          return;
+        }
+        const data = await resp.json();
+        // Build the entry for the UI using the returned id
+        const id = data.id;
+        const entry = {
+          id: id,
+          latex: latex,
+          time: Date.now(),
+          pngURL: `/api/history/${id}/png`
+        };
+        saveHistoryCard(entry);
+        // Limit to 24 cards in the DOM
+        while(els.history.children.length > 24){
+          els.history.removeChild(els.history.lastElementChild);
+        }
+        setStatus('Saved to history ✓', 'ok');
+      }catch(err){
+        setStatus('Failed to save history: ' + err, 'err');
+      }finally{
+        els.saveHistoryBtn.disabled = false;
+      }
+    }
+    // Hook up the button to the new async addToHistory
+    els.saveHistoryBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      addToHistory();
+    });
 
     // Draft
     const DRAFT_KEY = 'latren-draft-v1';
@@ -803,6 +1420,21 @@
 
     els.renderBtn.addEventListener('click', render);
 
+    
+    // Batch delimiter UI bindings
+    const batchSel = document.getElementById('batchDelimiterSel');
+    const batchRegexInput = document.getElementById('batchRegexInput');
+    if (batchSel) {
+      batchSel.addEventListener('change', () => {
+        state.batchDelimiter = batchSel.value || 'blank';
+        if (state.batchDelimiter === 'regex') {
+          batchRegexInput.style.display = '';
+        } else {
+          batchRegexInput.style.display = 'none';
+        }
+      });
+    }
+
     document.addEventListener('keydown', (e) => {
       if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); render(); }
       if((e.ctrlKey||e.metaKey) && (e.key==='s' || e.key==='S')){ e.preventDefault(); els.downloadPNGBtn.click(); }
@@ -810,6 +1442,7 @@
     });
 
     // --- Batch → ZIP ---
+    
     els.batchZipBtn.addEventListener('click', batchToZip);
 
     function splitIntoJobs(text){
@@ -817,8 +1450,7 @@
       return text.split(/\r?\n\r?\n+/).map(s => s.trim()).filter(Boolean);
     }
 
-    
-    // New splitter: split by single line breaks, but keep multi-line TeX blocks intact.
+    // New splitter: split by line while respecting LaTeX blocks
     function splitIntoJobsLines(text){
       const lines = (text || '').replace(/\r\n/g, '\n').split('\n');
       const jobs = [];
@@ -876,10 +1508,27 @@
       return jobs;
     }
 
-async function batchToZip(){
+
+    function splitUsingDelimiter(text){
+      if(state.batchDelimiter === 'dash'){
+        return text.split(/(?:^|[\r\n])---[\r\n]/).map(s=>s.trim()).filter(Boolean);
+      }
+      if(state.batchDelimiter === 'regex'){
+        try{
+          const pat = new RegExp(batchRegexInput.value || '^--+$', 'm');
+          return text.split(pat).map(s=>s.trim()).filter(Boolean);
+        }catch{
+          setStatus('Invalid regex delimiter. Falling back to blank line.', 'err');
+        }
+      }
+      // default: blank line
+      return text.split(/\r?\n\r?\n+/).map(s=>s.trim()).filter(Boolean);
+    }
+
+    async function batchToZip(){
       clearStatus();
       const raw = els.latex.value || '';
-      const blocks = splitIntoJobsLines(raw);
+      const blocks = splitUsingDelimiter(raw);
       if(blocks.length === 0){ setStatus('Nothing to batch: separate formulas with a blank line.', 'err'); return; }
 
       if(window.MathJax?.startup?.promise){ await MathJax.startup.promise; }
@@ -936,14 +1585,94 @@ async function batchToZip(){
     }
 
     /*
-      AI solver function
-      This function sends the current LaTeX problem to the OpenRouter API and
-      displays the step-by-step solution in the dedicated container. It
-      temporarily disables the solve button while awaiting a response and
-      provides basic error handling. The API key below is provided by the
-      user; do not share or log this key anywhere else.
+      AI solver function (kept from your version)
+      Uses Cerebras API key provided previously.
     */
     const CEREBRAS_KEY = 'csk-mh2dky3twvpr4dymrn25t9fjwy6dkkt6543p2ttn82jc3w5y';
+
+    // === Generate LaTeX from plain text (Edit ▾ → Generate from Text) ===
+    function cleanLatexFromAI(text){
+      if(!text) return '';
+      let s = text.trim();
+      // If it used triple backticks, extract inside
+      const fence = s.match(/```(?:latex|tex)?\s*([\s\S]*?)```/i);
+      if(fence && fence[1]) s = fence[1].trim();
+      // Strip leading "LaTeX:" or similar
+      s = s.replace(/^latex\s*:/i, '').trim();
+      // Remove Markdown code indentation
+      s = s.replace(/^\s*>+\s?/gm, '');
+      // Collapse Windows newlines
+      s = s.replace(/\r\n/g, '\n');
+      return s;
+    }
+
+    async function generateLatexFromText(){
+      if(!els.genText) return;
+      const plain = (els.genText.value || '').trim();
+      els.genStatus.textContent = '';
+      if(!plain){
+        els.genStatus.textContent = 'Type a description first.';
+        return;
+      }
+      const wantDisplay = false; // wrapping disabled
+
+      // UI: disable button
+      if(els.genInsertBtn) els.genInsertBtn.setAttribute('disabled', 'true');
+      els.genStatus.textContent = 'Generating…';
+
+      try {
+        const messages = [
+          { role: 'system', content:
+            'You are a LaTeX code generator that minimizes user typing.'+
+            'Input: plain-English math requests.'+
+            'Output: ONLY LaTeX code (no prose, no fences, no preamble)'+
+
+            'Rules:• Single expression → output the expression ONLY (no \[, $$, or \( \),• Multiple lines → use:\begin{align*<line with & alignment>\\\end{align*}(One & at the main relation per line. No numbering. If numbering is explicitly requested, use align.)}'+
+            '• If asked to solve an equation, output the equation ONLY, not the solution.• For matrices, use bmatrix.• For cases, use \begin{cases}...\end{cases}.• For text, use \text{...} inside math mode.• Use standard LaTeX commands (e.g. \cdot for multiplication, \frac for fractions, \sqrt for square roots, etc.)• Use ^{...} for exponents and _{...} for subscripts.• Use \left( and \right) for scalable parentheses.• Use \ldots for ellipses.• Use \\ to break lines inside environments.• Do NOT use HTML entities (e.g. &amp;, &lt;, &gt;) or Unicode symbols (e.g. ×, ±). Use LaTeX commands instead.• Do NOT include any preamble, documentclass, or begin/end document.• Do NOT include any explanations or notes; output only the LaTeX code.'
+          },
+          { role: 'user', content: 'Description: ' + plain + '\\nOutput ONLY the LaTeX expression(s). If it is an equation to solve, write the equation, not the solution.' }
+        ];
+        const response = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${CEREBRAS_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b',
+            messages: messages,
+            temperature: 0.2
+          })
+        });
+        if(!response.ok){
+          throw new Error(`API request failed (${response.status})`);
+        }
+        const data = await response.json();
+        let out = data?.choices?.[0]?.message?.content || '';
+        out = cleanLatexFromAI(out);
+
+        if(!out){
+          els.genStatus.textContent = 'No LaTeX returned. Try rephrasing.';
+        } else {
+          // Optionally wrap as display math
+          if(wantDisplay){
+            // If it already contains $$...$$ or \[...\], leave as is
+            const alreadyDisplay = /\\\[|\\begin\{(?:aligned|equation\*?|gather\*?)\}|^\$\$/.test(out);
+            if(!alreadyDisplay){
+              out = `\\[\\n${out}\\n\\]`;
+            }
+          }
+          insertAtCursor(els.latex, out);
+          els.genStatus.textContent = 'Inserted ✓';
+          if(state.live) render();
+        }
+      } catch(err){
+        els.genStatus.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
+      } finally {
+        if(els.genInsertBtn) els.genInsertBtn.removeAttribute('disabled');
+      }
+    }
+
     async function solveWithAI(){
       const tex = els.latex.value.trim();
       if(!tex){
@@ -953,7 +1682,6 @@ async function batchToZip(){
       els.solveBtn.setAttribute('disabled', 'true');
       els.aiSolution.textContent = 'Solving…';
       try {
-        // Compose the message instructing the model to solve step by step
         const messages = [
           { role: 'system', content: 'You are a helpful mathematics tutor. Solve the provided problem step by step, explaining your reasoning. Make the formulas big' },
           { role: 'user', content: `Solve the following problem step by step and show all work:\n\n${tex}` }
@@ -978,7 +1706,6 @@ async function batchToZip(){
           els.aiSolution.textContent = 'No solution was returned. Please try again.';
         } else {
           els.aiSolution.textContent = content.trim();
-          // Trigger MathJax to typeset any returned LaTeX
           if(window.MathJax && MathJax.typesetPromise){
             MathJax.typesetPromise([els.aiSolution]);
           }
@@ -990,9 +1717,23 @@ async function batchToZip(){
       }
     }
 
-    // Attach the click handler for the AI solver button
+
+    if(els.genInsertBtn){
+      els.genInsertBtn.addEventListener('click', generateLatexFromText);
+    }
+
     if(els.solveBtn){
       els.solveBtn.addEventListener('click', solveWithAI);
+    }
+
+    
+    function blobToDataURL(blob){
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
     }
 
     function blobToArrayBuffer(blob){
@@ -1005,10 +1746,1324 @@ async function batchToZip(){
     }
 
     // Init
-    loadCats(); applyCategoryFilter(); loadDraft(); parseShareUrl(); refreshHistory();
-    // Initial render (safe content uses \[...\], not flalign*)
-    setTimeout(render, 60);
+    // Load categories and persisted settings; history is now server‑backed and
+    // will be loaded once authentication state is known (handled in auth script).
+    loadCats(); applyCategoryFilter(); loadDraft(); parseShareUrl();
+    // Initial render
+    setTimeout(()=>{ try{ render(); }catch(e){}; syncLiveLabel(); }, 60);
   })();
   </script>
+
+  <script>
+    (function(){
+      // Elements for the authentication modal and toolbar.
+      const modal = document.getElementById('authModal');
+      const loginBtn = document.getElementById('loginBtn');
+      const submitBtn = document.getElementById('authSubmit');
+      const createBtn = document.getElementById('createAccountBtn');
+      const emailInput = document.getElementById('authEmail');
+      const passInput = document.getElementById('authPass');
+
+      // Additional modal fields for enhanced auth flows
+      const nameInput = document.getElementById('authName');
+      const nameRow   = document.getElementById('authNameRow');
+      const emailRow  = document.getElementById('authEmailRow');
+      const passRow   = document.getElementById('authPassRow');
+      const newPassInput = document.getElementById('authNewPass');
+      const newPassRow   = document.getElementById('authNewPassRow');
+      const codeInput = document.getElementById('authCode');
+      const codeRow   = document.getElementById('authCodeRow');
+      const linkRow   = document.getElementById('authLinkRow');
+      const linkText  = document.getElementById('authLinkText');
+      const forgotBtn = document.getElementById('forgotPassBtn');
+      const resendBtn = document.getElementById('authResendBtn');
+      const welcomeMsg = document.getElementById('welcomeMsg');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const accountOptionsBtn = document.getElementById('accountOptionsBtn');
+      const authTitle = document.getElementById('authTitle');
+      // Track the current auth mode and cached email/name.  Modes: login,
+      // signup, verify, forgot, reset.
+      const authState = { mode: 'login', email: '', name: '' };
+
+      // When present the authErrorDiv shows inline messages below the form.
+      let authErrorDiv = null;
+      function ensureAuthErrorDiv(){
+        if(!authErrorDiv){
+          authErrorDiv = document.createElement('div');
+          authErrorDiv.id = 'authErrorMsg';
+          authErrorDiv.style.color = 'var(--danger)';
+          authErrorDiv.style.fontSize = '13px';
+          authErrorDiv.style.whiteSpace = 'pre-wrap';
+          const content = modal ? modal.querySelector('.content') : null;
+          if(content){
+            content.appendChild(authErrorDiv);
+          }
+        }
+        return authErrorDiv;
+      }
+      // Show a message in the auth modal.  When success=true the text
+      // appears in the success color; otherwise it appears in the error color.
+      function showAuthMsg(msg, success){
+        const div = ensureAuthErrorDiv();
+        div.textContent = msg || '';
+        div.style.color = success ? 'var(--success)' : 'var(--danger)';
+      }
+      function showAuthError(msg){
+        showAuthMsg(msg, false);
+      }
+      function clearAuthError(){
+        if(authErrorDiv){ authErrorDiv.textContent = ''; }
+      }
+
+      /**
+       * Switch the authentication modal to a given mode.  Adjusts which
+       * fields are visible, updates labels and button text, and wires up
+       * secondary actions like "Create one", "Log in", or "Resend code".
+       * Supported modes: 'login', 'signup', 'verify', 'forgot', 'reset'.
+       * Options may include an email and name which will prepopulate and
+       * disable fields as appropriate.
+       */
+      function setAuthMode(mode, opts){
+        opts = opts || {};
+        authState.mode = mode;
+        // Persist email/name when provided
+        if(opts.email){ authState.email = opts.email; }
+        if(opts.name){ authState.name = opts.name; }
+        // Reset error message and input values on mode change
+        clearAuthError();
+        // Always enable resend button; it may be disabled by cooldown later
+        if(resendBtn){ resendBtn.disabled = false; }
+        // Prepopulate fields when switching modes
+        if(mode === 'verify' || mode === 'reset'){
+          // Email is fixed during code entry flows
+          emailInput.value = authState.email || opts.email || '';
+          emailInput.setAttribute('disabled','true');
+        }else{
+          emailInput.removeAttribute('disabled');
+          if(opts.email){ emailInput.value = opts.email; }
+        }
+        if(mode === 'signup' && opts.name){ nameInput.value = opts.name; }
+        // Hide all rows by default
+        if(nameRow)  nameRow.style.display  = 'none';
+        if(passRow)  passRow.style.display  = 'none';
+        if(newPassRow) newPassRow.style.display = 'none';
+        if(codeRow)  codeRow.style.display  = 'none';
+        // Show/hide fields depending on mode
+        switch(mode){
+          case 'login':
+            var _cr = document.getElementById('authConfirmRow'); if(_cr) _cr.style.display='none';
+            var _sc = document.getElementById('passStrengthContainer'); if(_sc) _sc.style.display='none';
+    
+            if(nameRow) nameRow.style.display = 'none';
+            if(passRow) passRow.style.display = '';
+            if(newPassRow) newPassRow.style.display = 'none';
+            if(codeRow) codeRow.style.display = 'none';
+            // Title and buttons
+            if(authTitle) authTitle.textContent = 'Log in';
+            if(submitBtn) submitBtn.textContent = 'Log in';
+            // Link row: show create account and forgot password
+            if(linkText) linkText.textContent = 'Don\u2019t have an account?';
+            if(createBtn){ createBtn.textContent = 'Create one'; createBtn.style.display = ''; createBtn.onclick = (e) => { e.preventDefault(); setAuthMode('signup'); }; }
+            if(forgotBtn){ forgotBtn.style.display = ''; forgotBtn.onclick = (e) => { e.preventDefault(); setAuthMode('forgot'); }; }
+            if(resendBtn) resendBtn.style.display = 'none';
+            break;
+          case 'signup':
+            var _cr = document.getElementById('authConfirmRow'); if(_cr) _cr.style.display='';
+            var _sc = document.getElementById('passStrengthContainer'); if(_sc) _sc.style.display='';
+    
+            // Show name and password; hide new password and code
+            if(nameRow) nameRow.style.display = '';
+            if(passRow) passRow.style.display = '';
+            if(newPassRow) newPassRow.style.display = 'none';
+            if(codeRow) codeRow.style.display = 'none';
+            if(authTitle) authTitle.textContent = 'Create account';
+            if(submitBtn) submitBtn.textContent = 'Sign up';
+            if(linkText) linkText.textContent = 'Already have an account?';
+            if(createBtn){ createBtn.textContent = 'Log in'; createBtn.style.display = ''; createBtn.onclick = (e) => { e.preventDefault(); setAuthMode('login'); }; }
+            if(forgotBtn) forgotBtn.style.display = 'none';
+            if(resendBtn) resendBtn.style.display = 'none';
+            break;
+          case 'verify':
+            var _cr = document.getElementById('authConfirmRow'); if(_cr) _cr.style.display='none';
+            var _sc = document.getElementById('passStrengthContainer'); if(_sc) _sc.style.display='none';
+    
+            // Show code only; disable email editing
+            if(codeRow) codeRow.style.display = '';
+            if(passRow) passRow.style.display = 'none';
+            if(nameRow) nameRow.style.display = 'none';
+            if(newPassRow) newPassRow.style.display = 'none';
+            if(authTitle) authTitle.textContent = 'Verify your email';
+            if(submitBtn) submitBtn.textContent = 'Verify';
+            if(linkText) linkText.textContent = 'Wrong email?';
+            if(createBtn){ createBtn.textContent = 'Change'; createBtn.style.display = ''; createBtn.onclick = (e) => { e.preventDefault(); setAuthMode('signup'); }; }
+            if(forgotBtn) forgotBtn.style.display = 'none';
+            if(resendBtn){ resendBtn.style.display = ''; resendBtn.onclick = (e) => { e.preventDefault(); doResend(); }; }
+            break;
+          case 'forgot':
+            var _cr = document.getElementById('authConfirmRow'); if(_cr) _cr.style.display='none';
+            var _sc = document.getElementById('passStrengthContainer'); if(_sc) _sc.style.display='none';
+    
+            // Only email input is needed
+            if(passRow) passRow.style.display = 'none';
+            if(nameRow) nameRow.style.display = 'none';
+            if(newPassRow) newPassRow.style.display = 'none';
+            if(codeRow) codeRow.style.display = 'none';
+            if(authTitle) authTitle.textContent = 'Forgot password';
+            if(submitBtn) submitBtn.textContent = 'Send code';
+            if(linkText) linkText.textContent = 'Remember your password?';
+            if(createBtn){ createBtn.textContent = 'Log in'; createBtn.style.display = ''; createBtn.onclick = (e) => { e.preventDefault(); setAuthMode('login'); }; }
+            if(forgotBtn) forgotBtn.style.display = 'none';
+            if(resendBtn) resendBtn.style.display = 'none';
+            break;
+          case 'reset':
+            var _cr = document.getElementById('authConfirmRow'); if(_cr) _cr.style.display='none';
+            var _sc = document.getElementById('passStrengthContainer'); if(_sc) _sc.style.display='none';
+    
+            // Email (disabled), code and new password inputs
+            if(passRow) passRow.style.display = 'none';
+            if(nameRow) nameRow.style.display = 'none';
+            if(newPassRow) newPassRow.style.display = '';
+            if(codeRow) codeRow.style.display = '';
+            if(authTitle) authTitle.textContent = 'Reset password';
+            if(submitBtn) submitBtn.textContent = 'Reset';
+            if(linkText) linkText.textContent = 'Return to log in?';
+            if(createBtn){ createBtn.textContent = 'Log in'; createBtn.style.display = ''; createBtn.onclick = (e) => { e.preventDefault(); setAuthMode('login'); }; }
+            if(forgotBtn) forgotBtn.style.display = 'none';
+            if(resendBtn){ resendBtn.style.display = ''; resendBtn.onclick = (e) => { e.preventDefault(); doResend(); }; }
+            break;
+        }
+        // Clear or preserve values depending on mode
+        if(mode !== 'verify' && codeInput){ codeInput.value = ''; }
+        if(mode !== 'reset' && newPassInput){ newPassInput.value = ''; }
+        if(mode === 'signup' && nameInput){ nameInput.value = authState.name || ''; }
+        if(mode !== 'verify' && mode !== 'reset' && emailInput && !opts.email){
+          // Clear email input when switching to new flows unless an email
+          // was explicitly provided.  Do not clear for verify/reset to
+          // preserve the fixed value.
+          emailInput.value = '';
+        }
+      }
+
+      // Modal helpers for opening/closing and handling escape/outside clicks.
+      function openModal(mode){
+        if(!modal) return;
+        // Default to login mode if none specified
+        setAuthMode(mode || 'login');
+        modal.setAttribute('open','');
+        modal.setAttribute('aria-hidden','false');
+        setTimeout(()=>{ emailInput && emailInput.focus(); }, 10);
+        document.addEventListener('keydown', onEsc);
+      }
+      function closeModal(){
+        if(!modal) return;
+        modal.removeAttribute('open');
+        modal.setAttribute('aria-hidden','true');
+        document.removeEventListener('keydown', onEsc);
+        clearAuthError();
+        // Clear password on close for better UX
+        if(passInput) passInput.value = '';
+        if(nameInput) nameInput.value = '';
+        if(emailInput && !emailInput.disabled) emailInput.value = '';
+        if(codeInput) codeInput.value = '';
+        if(newPassInput) newPassInput.value = '';
+        // Reset to login mode for next open
+        setAuthMode('login');
+      }
+      function onEsc(e){ if(e.key === 'Escape'){ e.preventDefault(); closeModal(); } }
+      function onOutsideOrClose(e){
+        const t = e.target;
+        if(t && t.dataset && t.dataset.close === 'true'){ closeModal(); }
+      }
+      modal && modal.addEventListener('click', onOutsideOrClose);
+
+      // Perform login request
+      async function doLogin(){
+        clearAuthError();
+        const em = (emailInput && emailInput.value || '').trim().toLowerCase();
+        const pw = (passInput && passInput.value || '').trim();
+        if(!em || !pw){
+          showAuthError('Please enter both email and password.');
+          return;
+        }
+        // Disable buttons to prevent double submissions
+        submitBtn.disabled = true;
+        createBtn.disabled = true;
+        try{
+          const resp = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email: em, password: pw })
+          });
+          let data = null;
+          try{ data = await resp.json(); }catch{}
+          if(!resp.ok){
+            const msg = (data && data.error) || 'Invalid email or password';
+            // If the backend indicates the user needs to verify their email,
+            // switch to the verify mode and prefill the email field.
+            if(data && data.needsVerification){
+              authState.email = em;
+              setAuthMode('verify', { email: em });
+              showAuthError(msg);
+            }else{
+              showAuthError(msg);
+            }
+            return;
+          }
+          // Successful login; hide modal and refresh auth state
+          closeModal();
+          await checkAuth();
+        }catch(err){
+          showAuthError('Login error: ' + err);
+        }finally{
+          submitBtn.disabled = false;
+          createBtn.disabled = false;
+        }
+      }
+
+      // Perform sign‑up request
+      async function doSignup(){
+        clearAuthError();
+        const nm = (nameInput && nameInput.value || '').trim();
+        const em = (emailInput && emailInput.value || '').trim().toLowerCase();
+        const pw = (passInput && passInput.value || '').trim();
+        if(!nm){
+          showAuthError('Please enter your name.');
+          return;
+        }
+        if(!em || !pw){
+          showAuthError('Please enter email and password.');
+          return;
+        }
+        if(pw.length < 8){
+          showAuthError('Password must be at least 8 characters.');
+          return;
+        }
+        // Confirm password (signup-only UI)
+        try{
+          const cpw = (document.getElementById('authConfirm') && document.getElementById('authConfirm').value || '').trim();
+          if((authState && authState.mode === 'signup') && cpw !== '' && pw !== cpw){
+            showAuthError('Passwords do not match.');
+            return;
+          }
+        }catch(e){}
+        
+        submitBtn.disabled = true;
+        createBtn.disabled = true;
+        try{
+          const resp = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ name: nm, email: em, password: pw })
+          });
+          let data = null;
+          try{ data = await resp.json(); }catch{}
+          if(!resp.ok){
+            const msg = (data && data.error) || 'Failed to create account';
+            showAuthError(msg);
+            return;
+          }
+          // On success transition to verification flow; store email/name
+          authState.email = em;
+          authState.name = nm;
+          setAuthMode('verify', { email: em });
+          showAuthMsg('Verification code sent. Please check your email.', true);
+        }catch(err){
+          showAuthError('Sign‑up error: ' + err);
+        }finally{
+          submitBtn.disabled = false;
+          createBtn.disabled = false;
+        }
+      }
+
+      // Perform email verification using the code the user enters.  On
+      // success the modal closes and auth state is refreshed.  On error
+      // the error message from the server is displayed.  Verification
+      // flows rely on authState.email being populated.
+      async function doVerify(){
+        clearAuthError();
+        const em = authState.email || (emailInput && emailInput.value || '').trim().toLowerCase();
+        const code = (codeInput && codeInput.value || '').trim();
+        if(!em || !code){
+          showAuthError('Please enter the verification code.');
+          return;
+        }
+        submitBtn.disabled = true;
+        try{
+          const resp = await fetch('/api/auth/verify-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email: em, code: code })
+          });
+          let data = null;
+          try{ data = await resp.json(); }catch{}
+          if(!resp.ok){
+            const msg = (data && data.error) || 'Invalid verification code';
+            showAuthError(msg);
+            return;
+          }
+          // Verified and logged in
+          closeModal();
+          await checkAuth();
+        }catch(err){
+          showAuthError('Verification error: ' + err);
+        }finally{
+          submitBtn.disabled = false;
+        }
+      }
+
+      // Request a password reset.  Always returns ok on the server; on
+      // success the UI transitions to the reset view where the user can
+      // enter the code and a new password.  No information about
+      // account existence is revealed.
+      async function doForgot(){
+        clearAuthError();
+        const em = (emailInput && emailInput.value || '').trim().toLowerCase();
+        if(!em){
+          showAuthError('Please enter your email address.');
+          return;
+        }
+        submitBtn.disabled = true;
+        try{
+          await fetch('/api/auth/forgot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email: em })
+          });
+          // Move to reset mode.  We still show a message to the user.
+          authState.email = em;
+          setAuthMode('reset', { email: em });
+          showAuthMsg('If your account exists a reset code has been sent.', true);
+        }catch(err){
+          showAuthError('Error sending reset code: ' + err);
+        }finally{
+          submitBtn.disabled = false;
+        }
+      }
+
+      // Complete a password reset using a code and new password.  On success
+      // the user is logged in.  Invalid codes return an error.
+      async function doReset(){
+        clearAuthError();
+        const em = authState.email || (emailInput && emailInput.value || '').trim().toLowerCase();
+        const code = (codeInput && codeInput.value || '').trim();
+        const newPw = (newPassInput && newPassInput.value || '').trim();
+        if(!em || !code || !newPw){
+          showAuthError('Please enter the code and a new password.');
+          return;
+        }
+        if(newPw.length < 8){
+          showAuthError('Password must be at least 8 characters.');
+          return;
+        }
+        submitBtn.disabled = true;
+        try{
+          const resp = await fetch('/api/auth/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email: em, code: code, new_password: newPw })
+          });
+          let data = null;
+          try{ data = await resp.json(); }catch{}
+          if(!resp.ok){
+            const msg = (data && data.error) || 'Failed to reset password';
+            showAuthError(msg);
+            return;
+          }
+          // Password reset successful; close modal and refresh auth
+          closeModal();
+          await checkAuth();
+        }catch(err){
+          showAuthError('Password reset error: ' + err);
+        }finally{
+          submitBtn.disabled = false;
+        }
+      }
+
+      // Resend the current code (verification or password reset).  The
+      // server enforces cooldowns; errors are displayed to the user.  For
+      // password reset flows this calls /api/auth/forgot again; for
+      // verification flows it calls /api/auth/resend-code.
+      async function doResend(){
+        clearAuthError();
+        const em = authState.email || (emailInput && emailInput.value || '').trim().toLowerCase();
+        if(!em){
+          showAuthError('Missing email');
+          return;
+        }
+        resendBtn.disabled = true;
+        try{
+          let endpoint;
+          let payload;
+          if(authState.mode === 'verify'){
+            endpoint = '/api/auth/resend-code';
+            payload = { email: em };
+          }else if(authState.mode === 'reset'){
+            endpoint = '/api/auth/forgot';
+            payload = { email: em };
+          }
+          if(endpoint){
+            const resp = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify(payload)
+            });
+            let data = null;
+            try{ data = await resp.json(); }catch{}
+            if(!resp.ok){
+              const msg = (data && data.error) || 'Error sending code';
+              showAuthError(msg);
+            }else{
+              showAuthMsg('Code sent. Please check your email.', true);
+            }
+          }
+        }catch(err){
+          showAuthError('Error sending code: ' + err);
+        }finally{
+          // Reenable button after 60 seconds to match server cooldown
+          setTimeout(() => { if(resendBtn) resendBtn.disabled = false; }, 60000);
+        }
+      }
+
+      // Logout the user and refresh auth state
+      async function doLogout(){
+        try{
+          await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        }catch{}
+        await checkAuth();
+      }
+
+      // Load history from the server and render up to 24 cards.  This runs
+      // whenever the auth state transitions to authenticated.
+      async function loadHistoryFromServer(){
+        if(!window.currentUserEmail) return;
+        try{
+          const resp = await fetch('/api/history', { credentials: 'same-origin' });
+          if(!resp.ok) return;
+          const items = await resp.json();
+          const els = window.latrenEls || {};
+          const histEl = els.history || document.getElementById('history');
+          if(histEl){
+            histEl.innerHTML = '';
+            let count = 0;
+            for(const item of items){
+              if(typeof window.saveHistoryCard === 'function'){
+                window.saveHistoryCard(item);
+              }
+              count++;
+              if(count >= 24) break;
+            }
+          }
+        }catch(err){
+          // Silently ignore history loading errors; they will surface on save
+        }
+      }
+
+      // Update UI based on authentication state.  Auth objects come from /api/me.
+      function updateAuthUI(auth){
+        const els = window.latrenEls || {};
+        const saveBtn = els.saveHistoryBtn || document.getElementById('saveHistoryBtn');
+        if(auth && auth.authenticated){
+          window.currentUserEmail = auth.email;
+          // Show greeting and logout button; hide login button
+          if(welcomeMsg){
+            const nm = auth.name || auth.email || '';
+            welcomeMsg.textContent = `Welcome, ${nm}`;
+            welcomeMsg.style.display = '';
+          }
+          if(loginBtn){ loginBtn.style.display = 'none'; }
+          if(logoutBtn){
+            logoutBtn.style.display = '';
+            logoutBtn.onclick = async (e) => {
+              e.preventDefault();
+              if(!window.confirm('Are you sure you want to log out?')) return;
+              await doLogout();
+            };
+          }
+          if(accountOptionsBtn){
+            accountOptionsBtn.style.display = '';
+            accountOptionsBtn.disabled = false;
+          }
+          if(saveBtn){
+            saveBtn.disabled = false;
+            saveBtn.title = '';
+            try{ saveBtn.style.display = ''; }catch(_){}
+          }
+          // Show 'Save to History' menu items and the History section
+          try{ document.querySelectorAll('[data-action="savehist"]').forEach(b => { b.style.display = ''; }); }catch(_){}
+          try{
+            var _histSection = document.querySelector('section.panel[aria-labelledby="history-title"]') || (document.getElementById('history') && document.getElementById('history').closest('section.panel'));
+            if(_histSection) _histSection.style.display = '';
+          }catch(_){}
+          // Load server‑backed history
+          loadHistoryFromServer();
+        }else{
+          window.currentUserEmail = null;
+          if(welcomeMsg){ welcomeMsg.style.display = 'none'; }
+          if(logoutBtn){ logoutBtn.style.display = 'none'; }
+          if(loginBtn){
+            loginBtn.style.display = '';
+            loginBtn.textContent = 'Log in';
+            loginBtn.onclick = (e) => {
+              e.preventDefault();
+              openModal('login');
+            };
+          }
+          if(accountOptionsBtn){
+            accountOptionsBtn.style.display = 'none';
+            accountOptionsBtn.disabled = true;
+            accountOptionsBtn.onclick = null;
+          }
+
+          if(loginBtn){
+          }
+          if(saveBtn){
+            saveBtn.disabled = true;
+            saveBtn.title = 'Log in to save history';
+            try{ saveBtn.style.display = 'none'; }catch(_){}
+          }
+          // Hide 'Save to History' menu items and the History section
+          try{ document.querySelectorAll('[data-action="savehist"]').forEach(b => { b.style.display = 'none'; }); }catch(_){}
+          try{
+            var _histSection = document.querySelector('section.panel[aria-labelledby="history-title"]') || (document.getElementById('history') && document.getElementById('history').closest('section.panel'));
+            if(_histSection) _histSection.style.display = 'none';
+          }catch(_){}
+          const histEl = els.history || document.getElementById('history');
+          if(histEl){ histEl.innerHTML = ''; }
+        }
+      }
+
+      // Check current session via /api/me
+      async function checkAuth(){
+        try{
+          const resp = await fetch('/api/me', { credentials: 'same-origin' });
+          if(!resp.ok){
+            updateAuthUI({ authenticated: false });
+            return;
+          }
+          const data = await resp.json();
+          updateAuthUI(data);
+        }catch(err){
+          updateAuthUI({ authenticated: false });
+        }
+      }
+
+      // Bind events to submit and create buttons
+      // Bind the submit button based on the current mode.  The create
+      // button actions are wired up by setAuthMode.
+      if(submitBtn){
+        submitBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          switch(authState.mode){
+            case 'login':   doLogin(); break;
+            case 'signup':  doSignup(); break;
+            case 'verify':  doVerify(); break;
+            case 'forgot':  doForgot(); break;
+            case 'reset':   doReset(); break;
+          }
+        });
+      }
+
+      // Initial auth check once the DOM is ready
+      checkAuth();
+    })();
+  </script>
+
+
+<script id="toggle-pass-delegate-v2">
+(function(){
+  if (window.__latrenTogglePassWired) return;
+  window.__latrenTogglePassWired = true;
+  document.addEventListener('click', function(e){
+    var el = e.target;
+    // climb up to the nearest button in case an inner element is clicked
+    while (el && el !== document && !(el.tagName && el.tagName.toLowerCase()==='button')) {
+      el = el.parentNode;
+    }
+    if (!el || !el.classList || !el.classList.contains('toggle-pass')) return;
+    var id = el.getAttribute('data-toggle-target');
+    if (!id) return;
+    var input = document.getElementById(id);
+    if (!input) return;
+    var isPw = (input.type === 'password');
+    try { input.type = isPw ? 'text' : 'password'; } catch(_) {}
+    // Optional UX: update aria-label for SR users
+    var lbl = el.getAttribute('aria-label') || '';
+    if (lbl) {
+      el.setAttribute('aria-label', isPw ? lbl.replace(/show/i,'Hide') : lbl.replace(/hide/i,'Show'));
+    }
+  }, true);
+})();
+</script>
+
+
+<script id="password-strength-wiring">
+(function(){
+  if (window.__latrenPwStrengthWired) return;
+  window.__latrenPwStrengthWired = true;
+  function $(id){ return document.getElementById(id); }
+  var pass = $('authPass');
+  var newPass = $('authNewPass');
+  var fill = $('passStrengthFill');
+  var label = $('passStrengthLabel');
+  // Prefer a dedicated container if present, else a legacy row container
+  var container = $('passStrengthContainer') || $('authStrengthRow') || null;
+  if(!pass && !newPass) return;
+
+  function scoreOf(pw){
+    // 0..5 scale
+    var s = 0;
+    if(!pw) return 0;
+    if(pw.length >= 8) s++;
+    if(pw.length >= 12) s++;
+    if(/[A-Z]/.test(pw)) s++;
+    if(/[a-z]/.test(pw)) s++;
+    if(/\d/.test(pw)) s++;
+    if(/[^A-Za-z0-9]/.test(pw)) s++;
+    if(/(.)\1{2,}/.test(pw)) s--;   // penalize repeats like 'aaa' or '111'
+    if(/\s/.test(pw)) s--;          // penalize spaces
+    if(s < 0) s = 0;
+    if(s > 5) s = 5;
+    return s;
+  }
+
+  function update(){
+    if(!fill || !label) return;
+    var src = (newPass && newPass.offsetParent !== null) ? newPass : pass;
+    var pw = (src && src.value) || '';
+    var sc = scoreOf(pw);
+    var pct = (sc/5)*100;
+    fill.style.width = pct + '%';
+    fill.classList.remove('bad','ok','good');
+    var txt = 'Very weak';
+    var cls = 'bad';
+    if(sc >= 1){ txt = 'Weak'; cls = 'bad'; }
+    if(sc >= 3){ txt = 'Okay'; cls = 'ok'; }
+    if(sc >= 4){ txt = 'Strong'; cls = 'good'; }
+    if(sc >= 5){ txt = 'Very strong'; cls = 'good'; }
+    fill.classList.add(cls);
+    label.textContent = txt;
+  }
+
+  // Wire events
+  pass && pass.addEventListener('input', update);
+  newPass && newPass.addEventListener('input', update);
+
+  // Ensure a toggle button exists for the primary password input (authPass)
+  if(pass){
+    var wrap = pass.closest ? pass.closest('.pass-wrap') : null;
+    if(!wrap){
+      // create wrapper and button
+      var wrapDiv = document.createElement('div');
+      wrapDiv.className = 'pass-wrap';
+      pass.parentNode.insertBefore(wrapDiv, pass);
+      wrapDiv.appendChild(pass);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'toggle-pass';
+      btn.setAttribute('data-toggle-target','authPass');
+      btn.setAttribute('aria-label','Show password');
+      btn.textContent = '👁';
+      wrapDiv.appendChild(btn);
+    }else if(!wrap.querySelector('.toggle-pass')){
+      var btn2 = document.createElement('button');
+      btn2.type = 'button';
+      btn2.className = 'toggle-pass';
+      btn2.setAttribute('data-toggle-target','authPass');
+      btn2.setAttribute('aria-label','Show password');
+      btn2.textContent = '👁';
+      wrap.appendChild(btn2);
+    }
+  }
+
+  // Initial paint
+  update();
+})();
+</script>
+
+<!-- Account Options Overlay -->
+<div id="accountOverlay" aria-hidden="true">
+  <div class="tut-backdrop" data-close="true"></div>
+  <div class="tut-card" role="dialog" aria-modal="true" aria-labelledby="accTitle" tabindex="-1">
+    <div class="tut-header">
+      <h3 id="accTitle">Account options</h3>
+      <button class="btn ghost small" id="accCloseBtn" type="button" aria-label="Close">Close</button>
+    </div>
+    <div class="tut-body">
+      <button class="btn bad" id="accLogoutBtn" type="button">Log out</button>
+      <div id="accLogoutConfirm" role="group" aria-label="Confirm logout">
+        <p class="confirm-title">Are you sure you want to log out?</p>
+        <div class="confirm-actions">
+          <button class="btn bad" id="accLogoutConfirmYes" type="button">Yes, log me out</button>
+          <button class="btn secondary" id="accLogoutConfirmNo" type="button">Cancel</button>
+        </div>
+      </div>
+      <hr />
+      <div class="acc-grid">
+        <div class="acc-actions" role="group" aria-label="Account actions">
+          <button class="btn secondary" id="accChangeEmailBtn" type="button">Change email</button>
+          <button class="btn secondary" id="accChangePassBtn" type="button">Change password</button>
+          <button class="btn secondary" id="accShortcutsBtn" type="button">Keyboard shortcuts</button>
+          <button class="btn secondary" id="accAboutBtn" type="button">About LatRen</button>
+          <button class="btn bad" id="accDeleteBtn" type="button">Delete account</button>
+        </div>
+
+        <!-- Panels -->
+        <div class="acc-panel" id="panelChangeEmail" aria-hidden="true">
+          <div class="row">
+            <label for="newEmail">New email</label>
+            <input id="newEmail" type="email" placeholder="you@newmail.com" autocomplete="email" />
+          </div>
+          <div class="row">
+            <label for="passForEmail">Current password</label>
+            <input id="passForEmail" type="password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="acc-actions">
+            <button class="btn secondary" id="submitChangeEmail" type="button">Save email</button>
+            <button class="btn ghost" id="cancelChangeEmail" type="button">Cancel</button>
+          </div>
+          <div class="msg" id="msgChangeEmail" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="acc-panel" id="panelChangePass" aria-hidden="true">
+          <div class="row">
+            <label for="currPass">Current password</label>
+            <input id="currPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="row">
+            <label for="newPass">New password (min 8)</label>
+            <input id="newPass" type="password" placeholder="New password" autocomplete="new-password" />
+          </div>
+          <div class="row">
+            <label for="newPass2">Confirm new password</label>
+            <input id="newPass2" type="password" placeholder="Confirm new password" autocomplete="new-password" />
+          </div>
+          <div class="acc-actions">
+            <button class="btn secondary" id="submitChangePass" type="button">Save password</button>
+            <button class="btn ghost" id="cancelChangePass" type="button">Cancel</button>
+          </div>
+          <div class="msg" id="msgChangePass" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="acc-panel" id="panelShortcuts" aria-hidden="true">
+          <ul style="margin:6px 0 0 18px;">
+            <li><kbd>Ctrl/Cmd</kbd> + <kbd>Enter</kbd> — Render</li>
+            <li><kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd> — Download PNG</li>
+            <li><kbd>Ctrl/Cmd</kbd> + <kbd>K</kbd> — Copy PNG</li>
+            <li><kbd>Esc</kbd> — Close dialogs/overlays</li>
+            <li><kbd>←</kbd>/<kbd>→</kbd> — Tutorial prev/next</li>
+          </ul>
+          <div class="acc-actions">
+            <button class="btn ghost" id="closeShortcuts" type="button">Close</button>
+          </div>
+        </div>
+
+        <div class="acc-panel" id="panelAbout" aria-hidden="true">
+          <p><strong>LatRen</strong> — Standalone LaTeX → Image Toolkit.</p>
+          <p>Built for speed, clarity, and reproducibility: render LaTeX to PNG/SVG, keep a per‑user history, batch export, and lint common mistakes. No cloud lock‑in.</p>
+          <p>v1.0 • © 2025 LatRen Project. Made with ♥ for students and researchers.</p>
+          <div class="acc-actions">
+            <button class="btn ghost" id="closeAbout" type="button">Close</button>
+          </div>
+        </div>
+
+        <div class="acc-panel" id="panelDelete" aria-hidden="true">
+          <p class="danger-note">This permanently deletes your account and all render history. This cannot be undone.</p>
+          <div class="row">
+            <label for="delConfirm">Type <b>DELETE</b> to confirm</label>
+            <input id="delConfirm" type="text" placeholder="DELETE" />
+          </div>
+          <div class="row">
+            <label for="delPass">Enter your password</label>
+            <input id="delPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="acc-actions">
+            <button class="btn bad" id="submitDelete" type="button">Yes, delete my account</button>
+            <button class="btn ghost" id="cancelDelete" type="button">Cancel</button>
+          </div>
+          <div class="msg" id="msgDelete" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Delete Confirmation Overlay -->
+<div id="historyConfirm" aria-hidden="true">
+  <div class="tut-backdrop" data-close="true"></div>
+  <div class="tut-card" role="dialog" aria-modal="true" aria-labelledby="histConfTitle" tabindex="-1">
+    <div class="tut-header">
+      <h3 id="histConfTitle">Delete from history?</h3>
+      <button class="btn small ghost" id="histConfClose" type="button">Close</button>
+    </div>
+    <div class="tut-body">
+      <p>This will permanently remove this entry from your history.</p>
+    </div>
+    <div class="tut-actions">
+      <button class="btn bad" id="histConfYes" type="button">Delete</button>
+      <button class="btn ghost" id="histConfNo" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script id="account-menu-script">
+(function(){
+  if (window.__latrenAccountMenuWired) return;
+  window.__latrenAccountMenuWired = true;
+
+  function $(sel){ return document.querySelector(sel); }
+
+  const overlay   = $('#accountOverlay');
+  const openBtn   = $('#accountOptionsBtn');
+  const closeBtn  = $('#accCloseBtn');
+  const backdrop  = overlay ? overlay.querySelector('.tut-backdrop') : null;
+  const logoutBtn = $('#accLogoutBtn');
+
+  const confirmRow    = $('#accLogoutConfirm');
+  const confirmYesBtn = $('#accLogoutConfirmYes');
+  const confirmNoBtn  = $('#accLogoutConfirmNo');
+
+  function showConfirm(show){
+    if(!confirmRow) return;
+    confirmRow.style.display = show ? 'block' : 'none';
+  }
+  function resetState(){
+    showConfirm(false);
+  }
+
+  function openOverlay(){
+    if(!overlay) return;
+    overlay.classList.add('enter');
+    overlay.setAttribute('aria-hidden','false');
+    setTimeout(()=>{
+      const card = overlay.querySelector('.tut-card');
+      if(card){ try{ card.focus(); }catch(_){} }
+    }, 0);
+  }
+  function closeOverlay(){
+    if(!overlay) return;
+    overlay.classList.remove('enter');
+    overlay.setAttribute('aria-hidden','true');
+    resetState();
+  }
+
+  // Wire open/close
+  if(openBtn){
+    openBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      openOverlay();
+    });
+  }
+  if(closeBtn){
+    closeBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      closeOverlay();
+    });
+  }
+  if(backdrop){
+    backdrop.addEventListener('click', function(){
+      closeOverlay();
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay && overlay.getAttribute('aria-hidden') === 'false'){
+      e.preventDefault();
+      closeOverlay();
+    }
+  });
+
+  // Logout now requires confirmation
+  if(logoutBtn){
+    logoutBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      showConfirm(true);
+      // Focus the dangerous action for quick keyboard access
+      if(confirmYesBtn){ confirmYesBtn.focus(); }
+    });
+  }
+  if(confirmNoBtn){
+    confirmNoBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      showConfirm(false);
+      // return focus to the trigger
+      if(logoutBtn){ logoutBtn.focus(); }
+    });
+  }
+  if(confirmYesBtn){
+    confirmYesBtn.addEventListener('click', async function(e){
+      e.preventDefault();
+      try{
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      }catch(_){}
+      closeOverlay();
+      // Reload to re-fetch auth state and refresh UI consistently
+      location.reload();
+    });
+  }
+
+  // --- Panel helpers ---
+  function openPanel(panelId){
+    const panels = overlay.querySelectorAll('.acc-panel');
+    panels.forEach(p => p.setAttribute('aria-hidden','true'));
+    const p = overlay.querySelector('#'+panelId);
+    if(p){ p.setAttribute('aria-hidden','false'); }
+  }
+  function closePanels(){
+    const panels = overlay.querySelectorAll('.acc-panel');
+    panels.forEach(p => p.setAttribute('aria-hidden','true'));
+  }
+
+  // Buttons
+  const btnEmail   = $('#accChangeEmailBtn');
+  const btnPass    = $('#accChangePassBtn');
+  const btnShort   = $('#accShortcutsBtn');
+  const btnAbout   = $('#accAboutBtn');
+  const btnDelete  = $('#accDeleteBtn');
+
+  // Panels + fields
+  const pEmail   = $('#panelChangeEmail');
+  const pPass    = $('#panelChangePass');
+  const pShort   = $('#panelShortcuts');
+  const pAbout   = $('#panelAbout');
+  const pDelete  = $('#panelDelete');
+
+  // Fields
+  const newEmail     = $('#newEmail');
+  const passForEmail = $('#passForEmail');
+  const msgChangeEmail = $('#msgChangeEmail');
+
+  const currPass       = $('#currPass');
+  const newPass        = $('#newPass');
+  const newPass2       = $('#newPass2');
+  const msgChangePass  = $('#msgChangePass');
+
+  const delConfirm = $('#delConfirm');
+  const delPass    = $('#delPass');
+  const msgDelete  = $('#msgDelete');
+
+  // Action buttons inside panels
+  const submitChangeEmail = $('#submitChangeEmail');
+  const cancelChangeEmail = $('#cancelChangeEmail');
+  const submitChangePass  = $('#submitChangePass');
+  const cancelChangePass  = $('#cancelChangePass');
+  const closeShortcuts    = $('#closeShortcuts');
+  const closeAbout        = $('#closeAbout');
+  const submitDelete      = $('#submitDelete');
+  const cancelDelete      = $('#cancelDelete');
+
+  // Wire openers
+  if(btnEmail){ btnEmail.addEventListener('click', ()=>{ openPanel('panelChangeEmail'); newEmail?.focus(); }); }
+  if(btnPass){  btnPass .addEventListener('click', ()=>{ openPanel('panelChangePass');  currPass?.focus(); }); }
+  if(btnShort){ btnShort.addEventListener('click',()=>{ openPanel('panelShortcuts'); }); }
+  if(btnAbout){ btnAbout.addEventListener('click',()=>{ openPanel('panelAbout'); }); }
+  if(btnDelete){btnDelete.addEventListener('click',()=>{ openPanel('panelDelete'); delConfirm?.focus(); }); }
+
+  // Wire closers
+  if(cancelChangeEmail){ cancelChangeEmail.addEventListener('click', ()=>{ closePanels(); }); }
+  if(cancelChangePass){  cancelChangePass .addEventListener('click', ()=>{ closePanels(); }); }
+  if(closeShortcuts){    closeShortcuts   .addEventListener('click', ()=>{ closePanels(); }); }
+  if(closeAbout){        closeAbout       .addEventListener('click', ()=>{ closePanels(); }); }
+  if(cancelDelete){      cancelDelete     .addEventListener('click', ()=>{ closePanels(); }); }
+
+  // Submit handlers
+  if(submitChangeEmail){
+    submitChangeEmail.addEventListener('click', async ()=>{
+      msgChangeEmail.textContent='';
+      const payload = { new_email: (newEmail?.value||'').trim(), password: (passForEmail?.value||'') };
+      if(!payload.new_email){ msgChangeEmail.textContent='Please enter a new email.'; msgChangeEmail.className='msg err'; return; }
+      try{
+        const res = await fetch('/api/account/change-email', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if(!res.ok){ throw new Error(data.error || 'Failed'); }
+        msgChangeEmail.textContent='Email updated.'; msgChangeEmail.className='msg ok';
+        // Reflect in welcome text if present
+        const welcome = document.querySelector('#welcomeMsg');
+        if(welcome && data.email){ welcome.textContent = 'Hi, ' + data.email; }
+        newEmail.value=''; passForEmail.value='';
+        closePanels();
+      }catch(err){
+        msgChangeEmail.textContent = err.message || 'Unable to change email.';
+        msgChangeEmail.className='msg err';
+      }
+    });
+  }
+
+  if(submitChangePass){
+    submitChangePass.addEventListener('click', async ()=>{
+      msgChangePass.textContent='';
+      const p1 = (currPass?.value||''); const p2=(newPass?.value||''); const p3=(newPass2?.value||'');
+      if(p2.length < 8){ msgChangePass.textContent='New password must be at least 8 characters.'; msgChangePass.className='msg err'; return; }
+      if(p2 !== p3){ msgChangePass.textContent='Passwords do not match.'; msgChangePass.className='msg err'; return; }
+      try{
+        const res = await fetch('/api/account/change-password', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ current_password:p1, new_password:p2 }) });
+        const data = await res.json();
+        if(!res.ok){ throw new Error(data.error || 'Failed'); }
+        msgChangePass.textContent='Password updated.'; msgChangePass.className='msg ok';
+        currPass.value=''; newPass.value=''; newPass2.value='';
+        closePanels();
+      }catch(err){
+        msgChangePass.textContent = err.message || 'Unable to change password.';
+        msgChangePass.className='msg err';
+      }
+    });
+  }
+
+  if(submitDelete){
+    submitDelete.addEventListener('click', async ()=>{
+      msgDelete.textContent='';
+      const confirm = (delConfirm?.value||'').trim();
+      const password = (delPass?.value||'');
+      if(confirm.toUpperCase() !== 'DELETE'){ msgDelete.textContent='Please type DELETE.'; msgDelete.className='msg err'; return; }
+      try{
+        const res = await fetch('/api/account/delete', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ confirm, password }) });
+        const data = await res.json();
+        if(!res.ok){ throw new Error(data.error || 'Failed'); }
+        // Success: reload to show logged-out state
+        location.reload();
+      }catch(err){
+        msgDelete.textContent = err.message || 'Failed to delete account.';
+        msgDelete.className='msg err';
+      }
+    });
+  }
+
+})();
+</script>
+
+<script id="history-confirm-script">
+(function(){
+  if (window.__latrenHistoryConfirmWired) return;
+  window.__latrenHistoryConfirmWired = true;
+
+  function $(sel){ return document.querySelector(sel); }
+  const overlay = $('#historyConfirm');
+  const cardEl = overlay ? overlay.querySelector('.tut-card') : null;
+  const btnClose = $('#histConfClose');
+  const btnNo = $('#histConfNo');
+  const btnYes = $('#histConfYes');
+  const backdrop = overlay ? overlay.querySelector('.tut-backdrop') : null;
+
+  let pending = { id: null, card: null };
+
+  function openOverlay(){
+    if(!overlay) return;
+    overlay.classList.add('enter');
+    overlay.setAttribute('aria-hidden','false');
+    setTimeout(function(){
+      if(cardEl){ try{ cardEl.focus(); }catch(_){} }
+    }, 0);
+  }
+  function closeOverlay(){
+    if(!overlay) return;
+    overlay.classList.remove('enter');
+    overlay.setAttribute('aria-hidden','true');
+    pending.id = null; pending.card = null;
+  }
+
+  function onEsc(e){
+    if(e.key === 'Escape' && overlay && overlay.getAttribute('aria-hidden') === 'false'){
+      e.preventDefault();
+      closeOverlay();
+    }
+  }
+  document.addEventListener('keydown', onEsc);
+
+  if(backdrop){ backdrop.addEventListener('click', closeOverlay); }
+  if(btnClose){ btnClose.addEventListener('click', function(e){ e.preventDefault(); closeOverlay(); }); }
+  if(btnNo){ btnNo.addEventListener('click', function(e){ e.preventDefault(); closeOverlay(); }); }
+
+  if(btnYes){
+    btnYes.addEventListener('click', async function(e){
+      e.preventDefault();
+      const id = pending.id;
+      const card = pending.card;
+      if(!id){
+        if(card){ try{ card.remove(); }catch(_){} }
+        closeOverlay();
+        return;
+      }
+      try{
+        const resp = await fetch(`/api/history/${id}`, { method: 'DELETE', credentials: 'same-origin' });
+        if(resp.ok){
+          if(card){ card.remove(); }
+          if(typeof window.setStatus === 'function'){ window.setStatus('Deleted from history ✓', 'ok'); }
+        }else{
+          let data = null;
+          try{ data = await resp.json(); }catch(_){}
+          const msg = (data && data.error) || 'Failed to delete';
+          if(typeof window.setStatus === 'function'){ window.setStatus(msg, 'err'); }
+        }
+      }catch(err){
+        if(typeof window.setStatus === 'function'){ window.setStatus('Failed to delete: ' + err, 'err'); }
+      }finally{
+        closeOverlay();
+      }
+    });
+  }
+
+  // Expose opener
+  window.openHistoryDeleteConfirm = function(id, card){
+    pending.id = id || null;
+    pending.card = card || null;
+    openOverlay();
+  };
+})();
+</script>
+
 </body>
 </html>
+
+<script>
+
+/* === Lightweight LaTeX Lint (client-side) === */
+(function(){
+  const ta = document.getElementById('latex');
+  const ov = document.getElementById('latexLintOverlay');
+  if(!ta || !ov) return;
+
+  // Whitelist of common LaTeX commands (letters only). Extendable.
+  const COMMANDS = new Set([
+    'alpha','beta','gamma','delta','epsilon','varepsilon','zeta','eta','theta','vartheta','iota','kappa','lambda','mu','nu','xi','pi','varpi','rho','varrho','sigma','varsigma','tau','upsilon','phi','varphi','chi','psi','omega',
+    'Gamma','Delta','Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega',
+    'frac','sqrt','text','mathrm','mathbf','mathit','mathbb','mathcal','operatorname','overline','underline','widehat','widetilde',
+    'left','right','big','Big','bigg','Bigg','lvert','rvert','lVert','rVert',
+    'cdot','times','pm','mp','le','ge','neq','approx','sim','propto','infty','partial','nabla',
+    'sum','prod','int','iint','iiint','oint','lim','max','min','log','ln','exp','sin','cos','tan','cot','sec','csc','arcsin','arccos','arctan',
+    'begin','end','tag','label','ref','eqref','color','bbox','cases','binom','choose','vec','dot','ddot','overbrace','underbrace','stackrel',
+    'to','mapsto','forall','exists',
+    'quad','qquad',',',';',':','!',
+    'space','phantom','vphantom','hphantom','textbf','textit','ttfamily','small','large','Huge','tiny',
+    'displaystyle','scriptstyle','scriptscriptstyle'
+  ]);
+
+  function computeLint(text){
+    const errs = [];
+    const push = (s,e)=>{ if(e>s) errs.push([s,e]); };
+
+    // 1) Unknown commands: \letters not in whitelist (ignore \\, \{ \}, \[ \] etc.)
+    const cmdRe = /\\([a-zA-Z]+)|\\\\|\\[$\\[\\]{}]/g;
+    let m;
+    while((m = cmdRe.exec(text))){
+      if(m[0] === '\\\\' || m[0] === '\\$' || m[0] === '\\{' || m[0] === '\\}' || m[0] === '\\[' || m[0] === '\\]') continue;
+      const name = m[1];
+      if(name && !COMMANDS.has(name)){
+        push(m.index, m.index + m[0].length);
+      }
+    }
+
+    // 2) Unbalanced braces { }
+    {
+      const stack = [];
+      for(let i=0;i<text.length;i++){
+        const ch = text[i];
+        if(ch === '{') stack.push(i);
+        else if(ch === '}'){
+          if(stack.length) stack.pop();
+          else push(i, i+1); // extra closing
+        }
+      }
+      for(const i of stack){ push(i, i+1); } // unmatched opening
+    }
+
+    // 3) Unbalanced display fences: \[ \] and $$ $$
+    {
+      // \[ \]
+      const allBr = [];
+      const brRe = /\\\[|\\\]/g;
+      let mm;
+      while((mm = brRe.exec(text))){ allBr.push([mm[0], mm.index]); }
+      let bal = 0;
+      for(const [tok, idx] of allBr){
+        if(tok === '\\[') bal++; else bal--;
+        if(bal < 0){ push(idx, idx+tok.length); bal = 0; }
+      }
+      while(bal-- > 0){
+        // highlight the last \[ (simple approach)
+        const idx = text.lastIndexOf('\\[');
+        if(idx>=0) push(idx, idx+2);
+      }
+      // $$ $$
+      const ds = [];
+      const dRe = /\$\$/g;
+      while((mm = dRe.exec(text))){ ds.push(mm.index); }
+      if(ds.length % 2 === 1){
+        push(ds[ds.length-1], ds[ds.length-1]+2);
+      }
+    }
+
+    return errs.sort((a,b)=> a[0]-b[0]);
+  }
+
+  function escapeHTML(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function mergeRanges(ranges){
+    if(!ranges.length) return [];
+    ranges.sort((a,b)=> a[0]-b[0]);
+    const out = [ranges[0].slice()];
+    for(const [s,e] of ranges.slice(1)){
+      const last = out[out.length-1];
+      if(s <= last[1]){ last[1] = Math.max(last[1], e); }
+      else out.push([s,e]);
+    }
+    return out;
+  }
+
+  function renderOverlay(){
+    if(!ov) return;
+    const text = ta.value || '';
+    // Mirror styles
+    const cs = getComputedStyle(ta);
+    ov.style.font = cs.font;
+    ov.style.lineHeight = cs.lineHeight;
+    ov.style.letterSpacing = cs.letterSpacing;
+    ov.style.padding = cs.padding;
+    ov.style.borderRadius = cs.borderRadius;
+    ov.style.background = 'transparent';
+
+    // Compute lint and build HTML
+    const ranges = mergeRanges(computeLint(text));
+    let html = '';
+    let i = 0;
+    for(const [s,e] of ranges){
+      if(i < s) html += '<span class="t">' + escapeHTML(text.slice(i,s)) + '</span>';
+      html += '<span class="e">' + escapeHTML(text.slice(s,e)) + '</span>';
+      i = e;
+    }
+    if(i < text.length) html += '<span class="t">' + escapeHTML(text.slice(i)) + '</span>';
+    // Ensure there's at least a newline to keep height aligned
+    if(text.length === 0) html = '<span class="t">\u200b</span>';
+    ov.innerHTML = html;
+
+    // Sync scroll & size
+    ov.scrollTop = ta.scrollTop;
+    ov.scrollLeft = ta.scrollLeft;
+    ov.style.height = ta.clientHeight + 'px';
+    ov.style.width  = ta.clientWidth + 'px';
+  }
+
+  // Keep overlay aligned with textarea position
+  function positionOverlay(){
+    const wrap = ta.closest('.editor-wrap');
+    if(!wrap) return;
+    ov.style.top = '0px';
+    ov.style.left = '0px';
+    renderOverlay();
+  }
+
+  // Event wiring
+  ['input','change','keyup','cut','paste'].forEach(ev => ta.addEventListener(ev, renderOverlay));
+  ['scroll'].forEach(ev => ta.addEventListener(ev, () => { ov.scrollTop = ta.scrollTop; ov.scrollLeft = ta.scrollLeft; }));
+  window.addEventListener('resize', positionOverlay, {passive:true});
+  document.addEventListener('DOMContentLoaded', positionOverlay);
+  // Initial paint
+  positionOverlay();
+})();
+
+</script>
